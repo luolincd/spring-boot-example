@@ -1,0 +1,991 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tech.court.dao.remote.CourtLiveMapper">
+  <resultMap id="BaseResultMap" type="com.tech.court.entity.CourtLive">
+    <id column="ftsyid" jdbcType="CHAR" property="ftsyid" />
+    <result column="ajbs" jdbcType="CHAR" property="ajbs" />
+    <result column="ajlxbs" jdbcType="CHAR" property="ajlxbs" />
+    <result column="ajlx" jdbcType="VARCHAR" property="ajlx" />
+    <result column="spcxbs" jdbcType="CHAR" property="spcxbs" />
+    <result column="spcx" jdbcType="VARCHAR" property="spcx" />
+    <result column="aybs" jdbcType="VARCHAR" property="aybs" />
+    <result column="aymc" jdbcType="VARCHAR" property="aymc" />
+    <result column="aq" jdbcType="VARCHAR" property="aq" />
+    <result column="nian" jdbcType="INTEGER" property="nian" />
+    <result column="fyjc" jdbcType="VARCHAR" property="fyjc" />
+    <result column="ajbh" jdbcType="VARCHAR" property="ajbh" />
+    <result column="spzhbs" jdbcType="CHAR" property="spzhbs" />
+    <result column="spzh" jdbcType="VARCHAR" property="spzh" />
+    <result column="ah" jdbcType="VARCHAR" property="ah" />
+    <result column="larq" jdbcType="CHAR" property="larq" />
+    <result column="cbsptbs" jdbcType="CHAR" property="cbsptbs" />
+    <result column="cbspt" jdbcType="VARCHAR" property="cbspt" />
+    <result column="cbrbs" jdbcType="CHAR" property="cbrbs" />
+    <result column="cbr" jdbcType="VARCHAR" property="cbr" />
+    <result column="sych" jdbcType="INTEGER" property="sych" />
+    <result column="sfgk" jdbcType="INTEGER" property="sfgk" />
+    <result column="dwid" jdbcType="CHAR" property="dwid" />
+    <result column="ztbs" jdbcType="INTEGER" property="ztbs" />
+    <result column="dsr" jdbcType="VARCHAR" property="dsr" />
+    <result column="ajcs" jdbcType="INTEGER" property="ajcs" />
+    <result column="ftyt" jdbcType="INTEGER" property="ftyt" />
+    <result column="tc" jdbcType="INTEGER" property="tc" />
+    <result column="ksrq" jdbcType="CHAR" property="ksrq" />
+    <result column="kssj" jdbcType="VARCHAR" property="kssj" />
+    <result column="jsrq" jdbcType="CHAR" property="jsrq" />
+    <result column="jssj" jdbcType="VARCHAR" property="jssj" />
+    <result column="ftid" jdbcType="VARCHAR" property="ftid" />
+    <result column="ftmc" jdbcType="VARCHAR" property="ftmc" />
+    <result column="gkkt" jdbcType="INTEGER" property="gkkt" />
+    <result column="zt" jdbcType="INTEGER" property="zt" />
+    <result column="ktlx" jdbcType="INTEGER" property="ktlx" />
+    <result column="szftcs" jdbcType="INTEGER" property="szftcs" />
+    <result column="sfcsz" jdbcType="INTEGER" property="sfcsz" />
+    <result column="sfkl" jdbcType="INTEGER" property="sfkl" />
+    <result column="sfzb" jdbcType="INTEGER" property="sfzb" />
+    <result column="tsms" jdbcType="INTEGER" property="tsms" />
+    <result column="spzbs" jdbcType="CHAR" property="spzbs" />
+    <result column="spzmc" jdbcType="VARCHAR" property="spzmc" />
+    <result column="sjybs" jdbcType="CHAR" property="sjybs" />
+    <result column="sjymc" jdbcType="VARCHAR" property="sjymc" />
+    <result column="spybs" jdbcType="VARCHAR" property="spybs" />
+    <result column="spymc" jdbcType="VARCHAR" property="spymc" />
+    <result column="rmpsy" jdbcType="VARCHAR" property="rmpsy" />
+    <result column="pqlx" jdbcType="INTEGER" property="pqlx" />
+    <result column="sfzhdb" jdbcType="INTEGER" property="sfzhdb" />
+    <result column="zdypx" jdbcType="INTEGER" property="zdypx" />
+    <result column="brcystbs" jdbcType="VARCHAR" property="brcystbs" />
+    <result column="btdb" jdbcType="INTEGER" property="btdb" />
+    <result column="xbtdb" jdbcType="INTEGER" property="xbtdb" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    ftsyid, ajbs, ajlxbs, ajlx, spcxbs, spcx, aybs, aymc, aq, nian, fyjc, ajbh, spzhbs, 
+    spzh, ah, larq, cbsptbs, cbspt, cbrbs, cbr, sych, sfgk, dwid, ztbs, dsr, ajcs, ftyt, 
+    tc, ksrq, kssj, jsrq, jssj, ftid, ftmc, gkkt, zt, ktlx, szftcs, sfcsz, sfkl, sfzb, 
+    tsms, spzbs, spzmc, sjybs, sjymc, spybs, spymc, rmpsy, pqlx, sfzhdb, zdypx, brcystbs, 
+    btdb, xbtdb
+  </sql>
+  <select id="selectByExample" parameterType="com.tech.court.entity.CourtLiveExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from fy_ajxx_ftsy
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from fy_ajxx_ftsy
+    where ftsyid = #{ftsyid,jdbcType=CHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from fy_ajxx_ftsy
+    where ftsyid = #{ftsyid,jdbcType=CHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.tech.court.entity.CourtLiveExample">
+    delete from fy_ajxx_ftsy
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.tech.court.entity.CourtLive">
+    insert into fy_ajxx_ftsy (ftsyid, ajbs, ajlxbs, 
+      ajlx, spcxbs, spcx, aybs, 
+      aymc, aq, nian, fyjc, 
+      ajbh, spzhbs, spzh, ah, 
+      larq, cbsptbs, cbspt, cbrbs, 
+      cbr, sych, sfgk, dwid, 
+      ztbs, dsr, ajcs, ftyt, 
+      tc, ksrq, kssj, jsrq, 
+      jssj, ftid, ftmc, gkkt, 
+      zt, ktlx, szftcs, sfcsz, 
+      sfkl, sfzb, tsms, spzbs, 
+      spzmc, sjybs, sjymc, spybs, 
+      spymc, rmpsy, pqlx, 
+      sfzhdb, zdypx, brcystbs, 
+      btdb, xbtdb)
+    values (#{ftsyid,jdbcType=CHAR}, #{ajbs,jdbcType=CHAR}, #{ajlxbs,jdbcType=CHAR}, 
+      #{ajlx,jdbcType=VARCHAR}, #{spcxbs,jdbcType=CHAR}, #{spcx,jdbcType=VARCHAR}, #{aybs,jdbcType=VARCHAR}, 
+      #{aymc,jdbcType=VARCHAR}, #{aq,jdbcType=VARCHAR}, #{nian,jdbcType=INTEGER}, #{fyjc,jdbcType=VARCHAR}, 
+      #{ajbh,jdbcType=VARCHAR}, #{spzhbs,jdbcType=CHAR}, #{spzh,jdbcType=VARCHAR}, #{ah,jdbcType=VARCHAR}, 
+      #{larq,jdbcType=CHAR}, #{cbsptbs,jdbcType=CHAR}, #{cbspt,jdbcType=VARCHAR}, #{cbrbs,jdbcType=CHAR}, 
+      #{cbr,jdbcType=VARCHAR}, #{sych,jdbcType=INTEGER}, #{sfgk,jdbcType=INTEGER}, #{dwid,jdbcType=CHAR}, 
+      #{ztbs,jdbcType=INTEGER}, #{dsr,jdbcType=VARCHAR}, #{ajcs,jdbcType=INTEGER}, #{ftyt,jdbcType=INTEGER}, 
+      #{tc,jdbcType=INTEGER}, #{ksrq,jdbcType=CHAR}, #{kssj,jdbcType=VARCHAR}, #{jsrq,jdbcType=CHAR}, 
+      #{jssj,jdbcType=VARCHAR}, #{ftid,jdbcType=VARCHAR}, #{ftmc,jdbcType=VARCHAR}, #{gkkt,jdbcType=INTEGER}, 
+      #{zt,jdbcType=INTEGER}, #{ktlx,jdbcType=INTEGER}, #{szftcs,jdbcType=INTEGER}, #{sfcsz,jdbcType=INTEGER}, 
+      #{sfkl,jdbcType=INTEGER}, #{sfzb,jdbcType=INTEGER}, #{tsms,jdbcType=INTEGER}, #{spzbs,jdbcType=CHAR}, 
+      #{spzmc,jdbcType=VARCHAR}, #{sjybs,jdbcType=CHAR}, #{sjymc,jdbcType=VARCHAR}, #{spybs,jdbcType=VARCHAR}, 
+      #{spymc,jdbcType=VARCHAR}, #{rmpsy,jdbcType=VARCHAR}, #{pqlx,jdbcType=INTEGER}, 
+      #{sfzhdb,jdbcType=INTEGER}, #{zdypx,jdbcType=INTEGER}, #{brcystbs,jdbcType=VARCHAR}, 
+      #{btdb,jdbcType=INTEGER}, #{xbtdb,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.tech.court.entity.CourtLive">
+    insert into fy_ajxx_ftsy
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="ftsyid != null">
+        ftsyid,
+      </if>
+      <if test="ajbs != null">
+        ajbs,
+      </if>
+      <if test="ajlxbs != null">
+        ajlxbs,
+      </if>
+      <if test="ajlx != null">
+        ajlx,
+      </if>
+      <if test="spcxbs != null">
+        spcxbs,
+      </if>
+      <if test="spcx != null">
+        spcx,
+      </if>
+      <if test="aybs != null">
+        aybs,
+      </if>
+      <if test="aymc != null">
+        aymc,
+      </if>
+      <if test="aq != null">
+        aq,
+      </if>
+      <if test="nian != null">
+        nian,
+      </if>
+      <if test="fyjc != null">
+        fyjc,
+      </if>
+      <if test="ajbh != null">
+        ajbh,
+      </if>
+      <if test="spzhbs != null">
+        spzhbs,
+      </if>
+      <if test="spzh != null">
+        spzh,
+      </if>
+      <if test="ah != null">
+        ah,
+      </if>
+      <if test="larq != null">
+        larq,
+      </if>
+      <if test="cbsptbs != null">
+        cbsptbs,
+      </if>
+      <if test="cbspt != null">
+        cbspt,
+      </if>
+      <if test="cbrbs != null">
+        cbrbs,
+      </if>
+      <if test="cbr != null">
+        cbr,
+      </if>
+      <if test="sych != null">
+        sych,
+      </if>
+      <if test="sfgk != null">
+        sfgk,
+      </if>
+      <if test="dwid != null">
+        dwid,
+      </if>
+      <if test="ztbs != null">
+        ztbs,
+      </if>
+      <if test="dsr != null">
+        dsr,
+      </if>
+      <if test="ajcs != null">
+        ajcs,
+      </if>
+      <if test="ftyt != null">
+        ftyt,
+      </if>
+      <if test="tc != null">
+        tc,
+      </if>
+      <if test="ksrq != null">
+        ksrq,
+      </if>
+      <if test="kssj != null">
+        kssj,
+      </if>
+      <if test="jsrq != null">
+        jsrq,
+      </if>
+      <if test="jssj != null">
+        jssj,
+      </if>
+      <if test="ftid != null">
+        ftid,
+      </if>
+      <if test="ftmc != null">
+        ftmc,
+      </if>
+      <if test="gkkt != null">
+        gkkt,
+      </if>
+      <if test="zt != null">
+        zt,
+      </if>
+      <if test="ktlx != null">
+        ktlx,
+      </if>
+      <if test="szftcs != null">
+        szftcs,
+      </if>
+      <if test="sfcsz != null">
+        sfcsz,
+      </if>
+      <if test="sfkl != null">
+        sfkl,
+      </if>
+      <if test="sfzb != null">
+        sfzb,
+      </if>
+      <if test="tsms != null">
+        tsms,
+      </if>
+      <if test="spzbs != null">
+        spzbs,
+      </if>
+      <if test="spzmc != null">
+        spzmc,
+      </if>
+      <if test="sjybs != null">
+        sjybs,
+      </if>
+      <if test="sjymc != null">
+        sjymc,
+      </if>
+      <if test="spybs != null">
+        spybs,
+      </if>
+      <if test="spymc != null">
+        spymc,
+      </if>
+      <if test="rmpsy != null">
+        rmpsy,
+      </if>
+      <if test="pqlx != null">
+        pqlx,
+      </if>
+      <if test="sfzhdb != null">
+        sfzhdb,
+      </if>
+      <if test="zdypx != null">
+        zdypx,
+      </if>
+      <if test="brcystbs != null">
+        brcystbs,
+      </if>
+      <if test="btdb != null">
+        btdb,
+      </if>
+      <if test="xbtdb != null">
+        xbtdb,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="ftsyid != null">
+        #{ftsyid,jdbcType=CHAR},
+      </if>
+      <if test="ajbs != null">
+        #{ajbs,jdbcType=CHAR},
+      </if>
+      <if test="ajlxbs != null">
+        #{ajlxbs,jdbcType=CHAR},
+      </if>
+      <if test="ajlx != null">
+        #{ajlx,jdbcType=VARCHAR},
+      </if>
+      <if test="spcxbs != null">
+        #{spcxbs,jdbcType=CHAR},
+      </if>
+      <if test="spcx != null">
+        #{spcx,jdbcType=VARCHAR},
+      </if>
+      <if test="aybs != null">
+        #{aybs,jdbcType=VARCHAR},
+      </if>
+      <if test="aymc != null">
+        #{aymc,jdbcType=VARCHAR},
+      </if>
+      <if test="aq != null">
+        #{aq,jdbcType=VARCHAR},
+      </if>
+      <if test="nian != null">
+        #{nian,jdbcType=INTEGER},
+      </if>
+      <if test="fyjc != null">
+        #{fyjc,jdbcType=VARCHAR},
+      </if>
+      <if test="ajbh != null">
+        #{ajbh,jdbcType=VARCHAR},
+      </if>
+      <if test="spzhbs != null">
+        #{spzhbs,jdbcType=CHAR},
+      </if>
+      <if test="spzh != null">
+        #{spzh,jdbcType=VARCHAR},
+      </if>
+      <if test="ah != null">
+        #{ah,jdbcType=VARCHAR},
+      </if>
+      <if test="larq != null">
+        #{larq,jdbcType=CHAR},
+      </if>
+      <if test="cbsptbs != null">
+        #{cbsptbs,jdbcType=CHAR},
+      </if>
+      <if test="cbspt != null">
+        #{cbspt,jdbcType=VARCHAR},
+      </if>
+      <if test="cbrbs != null">
+        #{cbrbs,jdbcType=CHAR},
+      </if>
+      <if test="cbr != null">
+        #{cbr,jdbcType=VARCHAR},
+      </if>
+      <if test="sych != null">
+        #{sych,jdbcType=INTEGER},
+      </if>
+      <if test="sfgk != null">
+        #{sfgk,jdbcType=INTEGER},
+      </if>
+      <if test="dwid != null">
+        #{dwid,jdbcType=CHAR},
+      </if>
+      <if test="ztbs != null">
+        #{ztbs,jdbcType=INTEGER},
+      </if>
+      <if test="dsr != null">
+        #{dsr,jdbcType=VARCHAR},
+      </if>
+      <if test="ajcs != null">
+        #{ajcs,jdbcType=INTEGER},
+      </if>
+      <if test="ftyt != null">
+        #{ftyt,jdbcType=INTEGER},
+      </if>
+      <if test="tc != null">
+        #{tc,jdbcType=INTEGER},
+      </if>
+      <if test="ksrq != null">
+        #{ksrq,jdbcType=CHAR},
+      </if>
+      <if test="kssj != null">
+        #{kssj,jdbcType=VARCHAR},
+      </if>
+      <if test="jsrq != null">
+        #{jsrq,jdbcType=CHAR},
+      </if>
+      <if test="jssj != null">
+        #{jssj,jdbcType=VARCHAR},
+      </if>
+      <if test="ftid != null">
+        #{ftid,jdbcType=VARCHAR},
+      </if>
+      <if test="ftmc != null">
+        #{ftmc,jdbcType=VARCHAR},
+      </if>
+      <if test="gkkt != null">
+        #{gkkt,jdbcType=INTEGER},
+      </if>
+      <if test="zt != null">
+        #{zt,jdbcType=INTEGER},
+      </if>
+      <if test="ktlx != null">
+        #{ktlx,jdbcType=INTEGER},
+      </if>
+      <if test="szftcs != null">
+        #{szftcs,jdbcType=INTEGER},
+      </if>
+      <if test="sfcsz != null">
+        #{sfcsz,jdbcType=INTEGER},
+      </if>
+      <if test="sfkl != null">
+        #{sfkl,jdbcType=INTEGER},
+      </if>
+      <if test="sfzb != null">
+        #{sfzb,jdbcType=INTEGER},
+      </if>
+      <if test="tsms != null">
+        #{tsms,jdbcType=INTEGER},
+      </if>
+      <if test="spzbs != null">
+        #{spzbs,jdbcType=CHAR},
+      </if>
+      <if test="spzmc != null">
+        #{spzmc,jdbcType=VARCHAR},
+      </if>
+      <if test="sjybs != null">
+        #{sjybs,jdbcType=CHAR},
+      </if>
+      <if test="sjymc != null">
+        #{sjymc,jdbcType=VARCHAR},
+      </if>
+      <if test="spybs != null">
+        #{spybs,jdbcType=VARCHAR},
+      </if>
+      <if test="spymc != null">
+        #{spymc,jdbcType=VARCHAR},
+      </if>
+      <if test="rmpsy != null">
+        #{rmpsy,jdbcType=VARCHAR},
+      </if>
+      <if test="pqlx != null">
+        #{pqlx,jdbcType=INTEGER},
+      </if>
+      <if test="sfzhdb != null">
+        #{sfzhdb,jdbcType=INTEGER},
+      </if>
+      <if test="zdypx != null">
+        #{zdypx,jdbcType=INTEGER},
+      </if>
+      <if test="brcystbs != null">
+        #{brcystbs,jdbcType=VARCHAR},
+      </if>
+      <if test="btdb != null">
+        #{btdb,jdbcType=INTEGER},
+      </if>
+      <if test="xbtdb != null">
+        #{xbtdb,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.tech.court.entity.CourtLiveExample" resultType="java.lang.Long">
+    select count(*) from fy_ajxx_ftsy
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update fy_ajxx_ftsy
+    <set>
+      <if test="record.ftsyid != null">
+        ftsyid = #{record.ftsyid,jdbcType=CHAR},
+      </if>
+      <if test="record.ajbs != null">
+        ajbs = #{record.ajbs,jdbcType=CHAR},
+      </if>
+      <if test="record.ajlxbs != null">
+        ajlxbs = #{record.ajlxbs,jdbcType=CHAR},
+      </if>
+      <if test="record.ajlx != null">
+        ajlx = #{record.ajlx,jdbcType=VARCHAR},
+      </if>
+      <if test="record.spcxbs != null">
+        spcxbs = #{record.spcxbs,jdbcType=CHAR},
+      </if>
+      <if test="record.spcx != null">
+        spcx = #{record.spcx,jdbcType=VARCHAR},
+      </if>
+      <if test="record.aybs != null">
+        aybs = #{record.aybs,jdbcType=VARCHAR},
+      </if>
+      <if test="record.aymc != null">
+        aymc = #{record.aymc,jdbcType=VARCHAR},
+      </if>
+      <if test="record.aq != null">
+        aq = #{record.aq,jdbcType=VARCHAR},
+      </if>
+      <if test="record.nian != null">
+        nian = #{record.nian,jdbcType=INTEGER},
+      </if>
+      <if test="record.fyjc != null">
+        fyjc = #{record.fyjc,jdbcType=VARCHAR},
+      </if>
+      <if test="record.ajbh != null">
+        ajbh = #{record.ajbh,jdbcType=VARCHAR},
+      </if>
+      <if test="record.spzhbs != null">
+        spzhbs = #{record.spzhbs,jdbcType=CHAR},
+      </if>
+      <if test="record.spzh != null">
+        spzh = #{record.spzh,jdbcType=VARCHAR},
+      </if>
+      <if test="record.ah != null">
+        ah = #{record.ah,jdbcType=VARCHAR},
+      </if>
+      <if test="record.larq != null">
+        larq = #{record.larq,jdbcType=CHAR},
+      </if>
+      <if test="record.cbsptbs != null">
+        cbsptbs = #{record.cbsptbs,jdbcType=CHAR},
+      </if>
+      <if test="record.cbspt != null">
+        cbspt = #{record.cbspt,jdbcType=VARCHAR},
+      </if>
+      <if test="record.cbrbs != null">
+        cbrbs = #{record.cbrbs,jdbcType=CHAR},
+      </if>
+      <if test="record.cbr != null">
+        cbr = #{record.cbr,jdbcType=VARCHAR},
+      </if>
+      <if test="record.sych != null">
+        sych = #{record.sych,jdbcType=INTEGER},
+      </if>
+      <if test="record.sfgk != null">
+        sfgk = #{record.sfgk,jdbcType=INTEGER},
+      </if>
+      <if test="record.dwid != null">
+        dwid = #{record.dwid,jdbcType=CHAR},
+      </if>
+      <if test="record.ztbs != null">
+        ztbs = #{record.ztbs,jdbcType=INTEGER},
+      </if>
+      <if test="record.dsr != null">
+        dsr = #{record.dsr,jdbcType=VARCHAR},
+      </if>
+      <if test="record.ajcs != null">
+        ajcs = #{record.ajcs,jdbcType=INTEGER},
+      </if>
+      <if test="record.ftyt != null">
+        ftyt = #{record.ftyt,jdbcType=INTEGER},
+      </if>
+      <if test="record.tc != null">
+        tc = #{record.tc,jdbcType=INTEGER},
+      </if>
+      <if test="record.ksrq != null">
+        ksrq = #{record.ksrq,jdbcType=CHAR},
+      </if>
+      <if test="record.kssj != null">
+        kssj = #{record.kssj,jdbcType=VARCHAR},
+      </if>
+      <if test="record.jsrq != null">
+        jsrq = #{record.jsrq,jdbcType=CHAR},
+      </if>
+      <if test="record.jssj != null">
+        jssj = #{record.jssj,jdbcType=VARCHAR},
+      </if>
+      <if test="record.ftid != null">
+        ftid = #{record.ftid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.ftmc != null">
+        ftmc = #{record.ftmc,jdbcType=VARCHAR},
+      </if>
+      <if test="record.gkkt != null">
+        gkkt = #{record.gkkt,jdbcType=INTEGER},
+      </if>
+      <if test="record.zt != null">
+        zt = #{record.zt,jdbcType=INTEGER},
+      </if>
+      <if test="record.ktlx != null">
+        ktlx = #{record.ktlx,jdbcType=INTEGER},
+      </if>
+      <if test="record.szftcs != null">
+        szftcs = #{record.szftcs,jdbcType=INTEGER},
+      </if>
+      <if test="record.sfcsz != null">
+        sfcsz = #{record.sfcsz,jdbcType=INTEGER},
+      </if>
+      <if test="record.sfkl != null">
+        sfkl = #{record.sfkl,jdbcType=INTEGER},
+      </if>
+      <if test="record.sfzb != null">
+        sfzb = #{record.sfzb,jdbcType=INTEGER},
+      </if>
+      <if test="record.tsms != null">
+        tsms = #{record.tsms,jdbcType=INTEGER},
+      </if>
+      <if test="record.spzbs != null">
+        spzbs = #{record.spzbs,jdbcType=CHAR},
+      </if>
+      <if test="record.spzmc != null">
+        spzmc = #{record.spzmc,jdbcType=VARCHAR},
+      </if>
+      <if test="record.sjybs != null">
+        sjybs = #{record.sjybs,jdbcType=CHAR},
+      </if>
+      <if test="record.sjymc != null">
+        sjymc = #{record.sjymc,jdbcType=VARCHAR},
+      </if>
+      <if test="record.spybs != null">
+        spybs = #{record.spybs,jdbcType=VARCHAR},
+      </if>
+      <if test="record.spymc != null">
+        spymc = #{record.spymc,jdbcType=VARCHAR},
+      </if>
+      <if test="record.rmpsy != null">
+        rmpsy = #{record.rmpsy,jdbcType=VARCHAR},
+      </if>
+      <if test="record.pqlx != null">
+        pqlx = #{record.pqlx,jdbcType=INTEGER},
+      </if>
+      <if test="record.sfzhdb != null">
+        sfzhdb = #{record.sfzhdb,jdbcType=INTEGER},
+      </if>
+      <if test="record.zdypx != null">
+        zdypx = #{record.zdypx,jdbcType=INTEGER},
+      </if>
+      <if test="record.brcystbs != null">
+        brcystbs = #{record.brcystbs,jdbcType=VARCHAR},
+      </if>
+      <if test="record.btdb != null">
+        btdb = #{record.btdb,jdbcType=INTEGER},
+      </if>
+      <if test="record.xbtdb != null">
+        xbtdb = #{record.xbtdb,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update fy_ajxx_ftsy
+    set ftsyid = #{record.ftsyid,jdbcType=CHAR},
+      ajbs = #{record.ajbs,jdbcType=CHAR},
+      ajlxbs = #{record.ajlxbs,jdbcType=CHAR},
+      ajlx = #{record.ajlx,jdbcType=VARCHAR},
+      spcxbs = #{record.spcxbs,jdbcType=CHAR},
+      spcx = #{record.spcx,jdbcType=VARCHAR},
+      aybs = #{record.aybs,jdbcType=VARCHAR},
+      aymc = #{record.aymc,jdbcType=VARCHAR},
+      aq = #{record.aq,jdbcType=VARCHAR},
+      nian = #{record.nian,jdbcType=INTEGER},
+      fyjc = #{record.fyjc,jdbcType=VARCHAR},
+      ajbh = #{record.ajbh,jdbcType=VARCHAR},
+      spzhbs = #{record.spzhbs,jdbcType=CHAR},
+      spzh = #{record.spzh,jdbcType=VARCHAR},
+      ah = #{record.ah,jdbcType=VARCHAR},
+      larq = #{record.larq,jdbcType=CHAR},
+      cbsptbs = #{record.cbsptbs,jdbcType=CHAR},
+      cbspt = #{record.cbspt,jdbcType=VARCHAR},
+      cbrbs = #{record.cbrbs,jdbcType=CHAR},
+      cbr = #{record.cbr,jdbcType=VARCHAR},
+      sych = #{record.sych,jdbcType=INTEGER},
+      sfgk = #{record.sfgk,jdbcType=INTEGER},
+      dwid = #{record.dwid,jdbcType=CHAR},
+      ztbs = #{record.ztbs,jdbcType=INTEGER},
+      dsr = #{record.dsr,jdbcType=VARCHAR},
+      ajcs = #{record.ajcs,jdbcType=INTEGER},
+      ftyt = #{record.ftyt,jdbcType=INTEGER},
+      tc = #{record.tc,jdbcType=INTEGER},
+      ksrq = #{record.ksrq,jdbcType=CHAR},
+      kssj = #{record.kssj,jdbcType=VARCHAR},
+      jsrq = #{record.jsrq,jdbcType=CHAR},
+      jssj = #{record.jssj,jdbcType=VARCHAR},
+      ftid = #{record.ftid,jdbcType=VARCHAR},
+      ftmc = #{record.ftmc,jdbcType=VARCHAR},
+      gkkt = #{record.gkkt,jdbcType=INTEGER},
+      zt = #{record.zt,jdbcType=INTEGER},
+      ktlx = #{record.ktlx,jdbcType=INTEGER},
+      szftcs = #{record.szftcs,jdbcType=INTEGER},
+      sfcsz = #{record.sfcsz,jdbcType=INTEGER},
+      sfkl = #{record.sfkl,jdbcType=INTEGER},
+      sfzb = #{record.sfzb,jdbcType=INTEGER},
+      tsms = #{record.tsms,jdbcType=INTEGER},
+      spzbs = #{record.spzbs,jdbcType=CHAR},
+      spzmc = #{record.spzmc,jdbcType=VARCHAR},
+      sjybs = #{record.sjybs,jdbcType=CHAR},
+      sjymc = #{record.sjymc,jdbcType=VARCHAR},
+      spybs = #{record.spybs,jdbcType=VARCHAR},
+      spymc = #{record.spymc,jdbcType=VARCHAR},
+      rmpsy = #{record.rmpsy,jdbcType=VARCHAR},
+      pqlx = #{record.pqlx,jdbcType=INTEGER},
+      sfzhdb = #{record.sfzhdb,jdbcType=INTEGER},
+      zdypx = #{record.zdypx,jdbcType=INTEGER},
+      brcystbs = #{record.brcystbs,jdbcType=VARCHAR},
+      btdb = #{record.btdb,jdbcType=INTEGER},
+      xbtdb = #{record.xbtdb,jdbcType=INTEGER}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tech.court.entity.CourtLive">
+    update fy_ajxx_ftsy
+    <set>
+      <if test="ajbs != null">
+        ajbs = #{ajbs,jdbcType=CHAR},
+      </if>
+      <if test="ajlxbs != null">
+        ajlxbs = #{ajlxbs,jdbcType=CHAR},
+      </if>
+      <if test="ajlx != null">
+        ajlx = #{ajlx,jdbcType=VARCHAR},
+      </if>
+      <if test="spcxbs != null">
+        spcxbs = #{spcxbs,jdbcType=CHAR},
+      </if>
+      <if test="spcx != null">
+        spcx = #{spcx,jdbcType=VARCHAR},
+      </if>
+      <if test="aybs != null">
+        aybs = #{aybs,jdbcType=VARCHAR},
+      </if>
+      <if test="aymc != null">
+        aymc = #{aymc,jdbcType=VARCHAR},
+      </if>
+      <if test="aq != null">
+        aq = #{aq,jdbcType=VARCHAR},
+      </if>
+      <if test="nian != null">
+        nian = #{nian,jdbcType=INTEGER},
+      </if>
+      <if test="fyjc != null">
+        fyjc = #{fyjc,jdbcType=VARCHAR},
+      </if>
+      <if test="ajbh != null">
+        ajbh = #{ajbh,jdbcType=VARCHAR},
+      </if>
+      <if test="spzhbs != null">
+        spzhbs = #{spzhbs,jdbcType=CHAR},
+      </if>
+      <if test="spzh != null">
+        spzh = #{spzh,jdbcType=VARCHAR},
+      </if>
+      <if test="ah != null">
+        ah = #{ah,jdbcType=VARCHAR},
+      </if>
+      <if test="larq != null">
+        larq = #{larq,jdbcType=CHAR},
+      </if>
+      <if test="cbsptbs != null">
+        cbsptbs = #{cbsptbs,jdbcType=CHAR},
+      </if>
+      <if test="cbspt != null">
+        cbspt = #{cbspt,jdbcType=VARCHAR},
+      </if>
+      <if test="cbrbs != null">
+        cbrbs = #{cbrbs,jdbcType=CHAR},
+      </if>
+      <if test="cbr != null">
+        cbr = #{cbr,jdbcType=VARCHAR},
+      </if>
+      <if test="sych != null">
+        sych = #{sych,jdbcType=INTEGER},
+      </if>
+      <if test="sfgk != null">
+        sfgk = #{sfgk,jdbcType=INTEGER},
+      </if>
+      <if test="dwid != null">
+        dwid = #{dwid,jdbcType=CHAR},
+      </if>
+      <if test="ztbs != null">
+        ztbs = #{ztbs,jdbcType=INTEGER},
+      </if>
+      <if test="dsr != null">
+        dsr = #{dsr,jdbcType=VARCHAR},
+      </if>
+      <if test="ajcs != null">
+        ajcs = #{ajcs,jdbcType=INTEGER},
+      </if>
+      <if test="ftyt != null">
+        ftyt = #{ftyt,jdbcType=INTEGER},
+      </if>
+      <if test="tc != null">
+        tc = #{tc,jdbcType=INTEGER},
+      </if>
+      <if test="ksrq != null">
+        ksrq = #{ksrq,jdbcType=CHAR},
+      </if>
+      <if test="kssj != null">
+        kssj = #{kssj,jdbcType=VARCHAR},
+      </if>
+      <if test="jsrq != null">
+        jsrq = #{jsrq,jdbcType=CHAR},
+      </if>
+      <if test="jssj != null">
+        jssj = #{jssj,jdbcType=VARCHAR},
+      </if>
+      <if test="ftid != null">
+        ftid = #{ftid,jdbcType=VARCHAR},
+      </if>
+      <if test="ftmc != null">
+        ftmc = #{ftmc,jdbcType=VARCHAR},
+      </if>
+      <if test="gkkt != null">
+        gkkt = #{gkkt,jdbcType=INTEGER},
+      </if>
+      <if test="zt != null">
+        zt = #{zt,jdbcType=INTEGER},
+      </if>
+      <if test="ktlx != null">
+        ktlx = #{ktlx,jdbcType=INTEGER},
+      </if>
+      <if test="szftcs != null">
+        szftcs = #{szftcs,jdbcType=INTEGER},
+      </if>
+      <if test="sfcsz != null">
+        sfcsz = #{sfcsz,jdbcType=INTEGER},
+      </if>
+      <if test="sfkl != null">
+        sfkl = #{sfkl,jdbcType=INTEGER},
+      </if>
+      <if test="sfzb != null">
+        sfzb = #{sfzb,jdbcType=INTEGER},
+      </if>
+      <if test="tsms != null">
+        tsms = #{tsms,jdbcType=INTEGER},
+      </if>
+      <if test="spzbs != null">
+        spzbs = #{spzbs,jdbcType=CHAR},
+      </if>
+      <if test="spzmc != null">
+        spzmc = #{spzmc,jdbcType=VARCHAR},
+      </if>
+      <if test="sjybs != null">
+        sjybs = #{sjybs,jdbcType=CHAR},
+      </if>
+      <if test="sjymc != null">
+        sjymc = #{sjymc,jdbcType=VARCHAR},
+      </if>
+      <if test="spybs != null">
+        spybs = #{spybs,jdbcType=VARCHAR},
+      </if>
+      <if test="spymc != null">
+        spymc = #{spymc,jdbcType=VARCHAR},
+      </if>
+      <if test="rmpsy != null">
+        rmpsy = #{rmpsy,jdbcType=VARCHAR},
+      </if>
+      <if test="pqlx != null">
+        pqlx = #{pqlx,jdbcType=INTEGER},
+      </if>
+      <if test="sfzhdb != null">
+        sfzhdb = #{sfzhdb,jdbcType=INTEGER},
+      </if>
+      <if test="zdypx != null">
+        zdypx = #{zdypx,jdbcType=INTEGER},
+      </if>
+      <if test="brcystbs != null">
+        brcystbs = #{brcystbs,jdbcType=VARCHAR},
+      </if>
+      <if test="btdb != null">
+        btdb = #{btdb,jdbcType=INTEGER},
+      </if>
+      <if test="xbtdb != null">
+        xbtdb = #{xbtdb,jdbcType=INTEGER},
+      </if>
+    </set>
+    where ftsyid = #{ftsyid,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.tech.court.entity.CourtLive">
+    update fy_ajxx_ftsy
+    set ajbs = #{ajbs,jdbcType=CHAR},
+      ajlxbs = #{ajlxbs,jdbcType=CHAR},
+      ajlx = #{ajlx,jdbcType=VARCHAR},
+      spcxbs = #{spcxbs,jdbcType=CHAR},
+      spcx = #{spcx,jdbcType=VARCHAR},
+      aybs = #{aybs,jdbcType=VARCHAR},
+      aymc = #{aymc,jdbcType=VARCHAR},
+      aq = #{aq,jdbcType=VARCHAR},
+      nian = #{nian,jdbcType=INTEGER},
+      fyjc = #{fyjc,jdbcType=VARCHAR},
+      ajbh = #{ajbh,jdbcType=VARCHAR},
+      spzhbs = #{spzhbs,jdbcType=CHAR},
+      spzh = #{spzh,jdbcType=VARCHAR},
+      ah = #{ah,jdbcType=VARCHAR},
+      larq = #{larq,jdbcType=CHAR},
+      cbsptbs = #{cbsptbs,jdbcType=CHAR},
+      cbspt = #{cbspt,jdbcType=VARCHAR},
+      cbrbs = #{cbrbs,jdbcType=CHAR},
+      cbr = #{cbr,jdbcType=VARCHAR},
+      sych = #{sych,jdbcType=INTEGER},
+      sfgk = #{sfgk,jdbcType=INTEGER},
+      dwid = #{dwid,jdbcType=CHAR},
+      ztbs = #{ztbs,jdbcType=INTEGER},
+      dsr = #{dsr,jdbcType=VARCHAR},
+      ajcs = #{ajcs,jdbcType=INTEGER},
+      ftyt = #{ftyt,jdbcType=INTEGER},
+      tc = #{tc,jdbcType=INTEGER},
+      ksrq = #{ksrq,jdbcType=CHAR},
+      kssj = #{kssj,jdbcType=VARCHAR},
+      jsrq = #{jsrq,jdbcType=CHAR},
+      jssj = #{jssj,jdbcType=VARCHAR},
+      ftid = #{ftid,jdbcType=VARCHAR},
+      ftmc = #{ftmc,jdbcType=VARCHAR},
+      gkkt = #{gkkt,jdbcType=INTEGER},
+      zt = #{zt,jdbcType=INTEGER},
+      ktlx = #{ktlx,jdbcType=INTEGER},
+      szftcs = #{szftcs,jdbcType=INTEGER},
+      sfcsz = #{sfcsz,jdbcType=INTEGER},
+      sfkl = #{sfkl,jdbcType=INTEGER},
+      sfzb = #{sfzb,jdbcType=INTEGER},
+      tsms = #{tsms,jdbcType=INTEGER},
+      spzbs = #{spzbs,jdbcType=CHAR},
+      spzmc = #{spzmc,jdbcType=VARCHAR},
+      sjybs = #{sjybs,jdbcType=CHAR},
+      sjymc = #{sjymc,jdbcType=VARCHAR},
+      spybs = #{spybs,jdbcType=VARCHAR},
+      spymc = #{spymc,jdbcType=VARCHAR},
+      rmpsy = #{rmpsy,jdbcType=VARCHAR},
+      pqlx = #{pqlx,jdbcType=INTEGER},
+      sfzhdb = #{sfzhdb,jdbcType=INTEGER},
+      zdypx = #{zdypx,jdbcType=INTEGER},
+      brcystbs = #{brcystbs,jdbcType=VARCHAR},
+      btdb = #{btdb,jdbcType=INTEGER},
+      xbtdb = #{xbtdb,jdbcType=INTEGER}
+    where ftsyid = #{ftsyid,jdbcType=CHAR}
+  </update>
+</mapper>

@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="renderer" content="webkit" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <title>执行数据</title>
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" href="css/bootstrap-select.css">
+    <link rel="stylesheet" href="css/jquery.jscrollpane.css">
+</head>
+<body class="execution-page">
+<div class="container"></div>
+<div class="header">
+    <img src="images/header/execution.png" alt="">
+</div>
+<div class="circle-1">
+    <img src="images/circle_1.png" alt="">
+</div>
+<div class="circle-2">
+    <img src="images/circle_2.png" alt="">
+</div>
+<div class="footer">
+    <img src="images/footer.png" alt="">
+</div>
+<div class="content-box">
+    <div class="con trial">
+        <div class="h clearfix">
+            <div class="breadcrumb">
+                <a class="child" href="index.html">首页</a>
+                <span class="child cur">执行数据</span>
+            </div>
+            <div class="nums">
+                立案标的：<span id="registerAmount" th:text="${summary.registerAmount}"></span>
+                结案标的：<span id="endAmount" th:text="${summary.endAmount}"></span>
+                实际到位标的：<span id="actualAmount" th:text="${summary.actualAmount}"></span>
+            </div>
+        </div>
+        <div class="bd clearfix">
+            <div class="chart_a">
+                <div class="cbox" id="wrapper">
+                    <div id="chart" style="width: 320px;height:280px;"></div>
+                    <div class="form">
+                        <dl>
+                            <dt>
+                                <i class="icon icon-clock"></i>
+                                起始时间：
+                            </dt>
+                            <dd>
+                                <div class="input input-date">
+                                    <input id="J_start" type="text" />
+                                    <i class="icon-date"></i>
+                                </div>
+                            </dd>
+                        </dl>
+                        <dl>
+                            <dt>
+                                <i class="icon icon-clock"></i>
+                                截止时间：
+                            </dt>
+                            <dd>
+                                <div class="input input-date">
+                                    <input id="J_end" type="text" />
+                                    <i class="icon-date"></i>
+                                </div>
+                            </dd>
+                        </dl>
+                        <dl>
+                            <dt>&nbsp;</dt><dd><a href="javascript:;" class="submit" id="J_search"></a></dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+            <div class="chart_b">
+                <div class="cb_hd">
+                    <div id="chart1" style="background: #000; width: 700px; height: 350px;"></div>
+                    <div id="countDate" class="tit" th:text="'数据汇总时间：'+${summary.startDate}+'至'+${summary.endDate}">数据汇总时间：2017-01-01 至 2017-12-31</div>
+                </div>
+            </div>
+        </div>
+        <div class="bf">
+            <div class="nb1">
+                <span class="name">执结率</span> <span class="count" id="endRate" th:text="${summary.endRate}">28%</span>
+            </div>
+            <div class="nb2">
+                <span class="name">执行标的到位率</span> <span class="count" id="actualAmountRate" th:text="${summary.actualAmountRate}+'%'">33%</span>
+            </div>
+            <div class="nb3">
+                <span class="name">执行兑现率</span> <span class="count" id="endAmountRate" th:text="${summary.endAmountRate}+'%'">15%</span>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.js"></script>
+<script src="js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript" src="js/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8"></script>
+<script src="js/bootstrap-select.min.js"></script>
+<script src="js/echarts.common.min.js"></script>
+<script src="js/jquery.mousewheel.js"></script>
+<script src="js/jquery.jscrollpane.min.js"></script>
+<script>
+    $("#wrapper").jScrollPane({
+                                  showArrows: true
+                              });
+    var timeEnd = $('#J_end').datetimepicker({
+                                                 format: 'yyyy-mm-dd',
+                                                 language: 'zh-CN',
+                                                 weekStart: 1,
+                                                 startView: 2,
+                                                 minView: 2,
+                                                 forceParse: false
+                                             });
+    var timeStart = $('#J_start').datetimepicker({
+                                                     format: 'yyyy-mm-dd',
+                                                     language: 'zh-CN',
+                                                     format: 'yyyy-mm-dd',
+                                                     language: 'zh-CN',
+                                                     weekStart: 1,
+                                                     startView: 2,
+                                                     minView: 2,
+                                                     forceParse: false
+                                                 });
+    timeStart.on('changeDate', function() {
+        timeStart.datetimepicker('hide');
+        timeEnd.datetimepicker('setStartDate', $('#J_start').val());
+    })
+    timeEnd.on('changeDate', function() {
+        timeEnd.datetimepicker('hide');
+    })
+    // 搜索
+    $('#J_search').click(function(){
+        loadCaseChart();
+        loadJudgeChart();
+        loadEnforceSummary();
+        if($('#J_start').val()!=''&&$('#J_end').val()!=''){
+            $('#countDate').text('数据汇总时间：'+$('#J_start').val()+'至'+$('#J_end').val());
+        }
+    })
+    loadCaseChart();
+    loadJudgeChart();
+
+    function loadJudgeChart() {
+        var judgeChart=echarts.init(document.getElementById('chart'));
+        var judgementData=[];    //类别数组（实际用来盛放X轴坐标值）
+        $.ajax({
+                   type: "GET",
+                   url: "courts/enforce-statistics",
+                   data:{
+                       "startDate": timeStart.val(),
+                       "endDate": timeEnd.val()
+                   },
+                   dataType: "json",
+                   contentType: "application/json; charset=utf-8",
+                   success: function(json) {
+                       var result=eval(json);
+                       if (result) {
+                           for(var i=0;i<result.length;i++) {
+                               judgementData.push({
+                                                      name: result[i].name,
+                                                      value: result[i].number
+                                                  })
+                           };
+                           judgeChart.setOption({
+                                                    legend: {
+                                                        data: judgementData.name,
+                                                        textStyle: {
+                                                            color: '#fff'
+                                                        },
+                                                        selectedMode: false,
+                                                        width: '80%',
+                                                        left: 10,
+                                                        top: 0
+                                                    },
+                                                    tooltip: {
+                                                        trigger: 'item',
+                                                        formatter: "{a} <br/>{b} : {c} ({d}%)"
+                                                    },
+                                                    series: {
+                                                        type: 'pie',
+                                                        radius: '60%',
+                                                        center: ['45%', '60%'],
+                                                        itemStyle: {
+                                                            emphasis: {
+                                                                shadowBlur: 10,
+                                                                shadowOffsetX: 0,
+                                                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                                            }
+                                                        },
+                                                        data:judgementData ,
+                                                        color: ['#6fab47', '#4170c0', '#f9bc01', '#ea7c31', '#275b85', '#bbffb2', '#5c9ad5', '#5c5bbb']
+                                                    }
+                                                });
+                       }
+
+                   },
+
+                   error: function(error) {
+
+                       //alert("调用出错" + error.responseText);
+
+                   }
+               });
+    }
+
+    function loadCaseChart() {
+        var caseChart=echarts.init(document.getElementById('chart1'));
+        $.ajax({
+                   type: "GET",
+                   url: "courts/enforce-case-count",
+                   data:{
+                       "startDate": timeStart.val(),
+                       "endDate": timeEnd.val()
+                   },
+                   dataType: "json",
+                   contentType: "application/json; charset=utf-8",
+                   success: function(json) {
+                       var result = eval(json);
+                       if (result) {
+                           caseChart.setOption({
+                                                   legend: {
+                                                       data: [
+                                                           {
+                                                               name: '收案数',
+                                                               textStyle: {
+                                                                   width: 5,
+                                                                   height: 5
+                                                               }
+                                                           },
+                                                           {
+                                                               name: '结案数',
+                                                           }
+                                                       ],
+                                                       textStyle: {
+                                                           color: '#fff'
+                                                       },
+                                                       selectedMode: false,
+                                                       width: '70%',
+                                                       left: '20%'
+                                                   },
+                                                   toolbox: {
+                                                       feature: {
+                                                           magicType: {show: true, type: ['line', 'bar']},
+                                                           saveAsImage: {show: true}
+                                                       },
+                                                       iconStyle:{
+                                                           borderColor: '#2f81c0'
+                                                       }
+                                                   },
+                                                   tooltip: {
+                                                       trigger: 'axis',
+                                                       axisPointer: {
+                                                           type: 'cross',
+                                                           crossStyle: {
+                                                               color: '#999'
+                                                           }
+                                                       }
+                                                   },
+                                                   xAxis: [{
+                                                       type: 'category',
+                                                       data : result.months,
+                                                       axisPointer: {
+                                                           type: 'shadow'
+                                                       }
+                                                   }],
+                                                   yAxis: [
+                                                       {
+                                                           type: 'value',
+                                                           axisLine: {
+                                                               lineStyle: {
+                                                                   color: '#1e3760',
+                                                                   width:3
+                                                               }
+                                                           },
+                                                           splitLine: {
+                                                               lineStyle: {
+                                                                   color: ['#1e3760'],
+                                                                   width:3
+                                                               }
+                                                           }
+                                                       }
+                                                   ],
+                                                   series:[
+                                                       {
+                                                           name: '收案数',
+                                                           type: 'bar',
+                                                           data: result.accpetNumber,
+                                                           itemStyle: {
+                                                               color: '#6a9dcd'
+                                                           }
+                                                       },
+                                                       {
+                                                           name: '结案数',
+                                                           type: 'bar',
+                                                           data: result.endNumber,
+                                                           itemStyle: {
+                                                               color: '#2f81c0'
+                                                           }
+                                                       }
+                                                   ],
+                                                   textStyle:{
+                                                       color: '#49caf6'
+                                                   }
+                                               });
+                       }
+                   },
+                   error: function(error) {
+                       //alert("调用出错" + error.responseText);
+                   }
+               });
+
+    }
+
+    loadEnforceSummary();
+
+    function loadEnforceSummary() {
+        $.ajax({
+                   type: "GET",
+                   url: "courts/enforce-summary",
+                   data: {
+                       "startDate": timeStart.val(),
+                       "endDate": timeEnd.val()
+                   },
+                   dataType: "json",
+                   contentType: "application/json; charset=utf-8",
+                   success: function (json) {
+                       var result = eval(json);
+                       $('#registerAmount').text(result.registerAmount);
+                       $('#endAmount').text(result.endAmount);
+                       $('#actualAmount').text(result.actualAmount);
+                       $('#endRate').text(result.endRate);
+                       $('#actualAmountRate').text(result.actualAmountRate+'%');
+                       $('#endAmountRate').text(result.endAmountRate+'%');
+                   }
+               })
+    }
+</script>
+</body>
+</html>

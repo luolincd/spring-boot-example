@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="renderer" content="webkit" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <title>法院介绍</title>
+  <link rel="stylesheet" href="css/index.css">
+  <link rel="stylesheet" href="css/jquery.jscrollpane.css">
+</head>
+<body class="introduce-page">
+<div class="container"></div>
+<div class="header">
+  <img src="images/header/introduce.png" alt="">
+</div>
+<div class="circle-1">
+  <img src="images/circle_1.png" alt="">
+</div>
+<div class="circle-2">
+  <img src="images/circle_2.png" alt="">
+</div>
+<div class="footer">
+  <img src="images/footer.png" alt="">
+</div>
+<div class="content-box">
+  <div class="con">
+    <div class="h clearfix">
+      <div class="breadcrumb"><a class="child" href="index.html">首页</a><span class="cur child">法院介绍</span></div>
+    </div>
+    <div class="bd">
+      <img src="images/introduce/intro.png" class="img" alt="">
+      <ul class="history">
+        <li class="f1">2013</li>
+        <li class="f2">2014</li>
+        <li class="f3">2015</li>
+        <li class="f4">2016</li>
+        <li class="f5">2017</li>
+        <li class="f6">2018</li>
+      </ul>
+      <ul class="department">
+        <li class="d1">金华法庭</li>
+        <li class="d2">复兴法庭</li>
+        <li class="d3">大榆法庭</li>
+        <li class="d4">天仙法庭</li>
+        <li class="d5">洋溪法庭</li>
+        <li class="d6">诉讼服务中心</li>
+        <li class="d7">青岗法庭</li>
+        <li class="d8">立案庭</li>
+        <li class="d9">沱牌法庭</li>
+        <li class="d10">大调解法庭</li>
+        <li class="d11">太乙法庭</li>
+        <li class="d12">刑庭</li>
+        <li class="d13">金家法庭</li>
+        <li class="d14">民一庭</li>
+        <li class="d15">民二庭</li>
+        <li class="d16">执行局（庭）</li>
+        <li class="d17">行政庭</li>
+        <li class="d18">仁和法庭</li>
+        <li class="d19">审监庭</li>
+        <li class="d20">交巡庭</li>
+        <li class="d21">政治处</li>
+        <li class="d22">办公室</li>
+        <li class="d23">党委办</li>
+        <li class="d24">网管办</li>
+        <li class="d25">监察科</li>
+        <li class="d26">审管办</li>
+        <li class="d27">研究室</li>
+        <li class="d28">档案室</li>
+        <li class="d29">鉴定办</li>
+        <li class="d30">法警队</li>
+      </ul>
+    </div>
+  </div>
+</div>
+<script src="js/moment.min.js"></script>
+<script src="js/jquery-3.2.1.min.js"></script>
+<script src="js/jquery.mousewheel.js"></script>
+<script src="js/jquery.jscrollpane.min.js"></script>
+<script>
+    (function(){
+        var str = '';
+        for(var i = 0; i < 18; i++){
+            str += '<span class="line '+(i < 9 ? "line-h" : "")+'"></span>'
+        }
+        $('.J_voice').html(str)
+    })()
+
+    var M = {
+        dialog: function(title, content) {
+            var h = '';
+            h += '<div class="popup popup-intro" style="display:block">';
+            h += '<div class="popup-modal"></div>';
+            h += '<div class="popup-content">'
+            h += '<div class="textContainer">'
+            h += '<div class="tit">'+title+'</div>'
+            h += '<div class="con">'
+            h += '<div id="wrapper">'
+            h += '<div style="padding:0 15px;">'
+            h += content;
+            h += '</div>'
+            h += '</div>'
+            h += '</div>'
+            h += '</div>'
+            h += '</div>'
+            h += '<div onClick="M.remove()" class="popup-close J_countdown_close"></div>'
+            h += '</div>'
+            this.element = $(h);
+            this.element.appendTo($('body'));
+        },
+        remove: function() {
+            this.element.remove();
+        }
+    }
+
+    $('.history li').click(function(){
+        // 此处需动态获取数据
+        var key = $(this).html();
+        $.ajax({
+                   type: 'get',
+                   url: '/ajax/info.json',
+                   dataType: 'json',
+                   success: function(data){
+                       var title, html = [], header, body;
+                       if(!data.honor) return;
+                       title = key + '年射洪县人民法院荣誉纪录';
+                       header = data.honor.header;
+                       body = data.honor.body;
+                       html.push('<table class="table table-bordered"><thead><tr>');
+                       for(var i = 0; i < header.length; i++){
+                           html.push('<th class="th'+i+'">'+header[i]+'</th>')
+                       }
+                       html.push('</tr></thead>');
+                       html.push('<tbody>');
+                       for(var i = 0; i < body.length; i++){
+                           var str = body[i][0] ? (body[i][0].toString().substr(0, 4) == key) : false
+                           if(!str) continue;
+                           html.push('<tr>')
+                           for(var j = 0; j < header.length; j++){
+                               html.push('<td>'+ (body[i][j] || '') +'</td>')
+                           }
+                           html.push('</tr>')
+                       }
+                       html.push('</tbody>')
+                       html.push('</table>')
+                       M.dialog(title, html.join(''))
+                       $("#wrapper").jScrollPane({
+                                                     showArrows: true
+                                                 })
+                   }
+               })
+    })
+    $('.department li').each(function(){
+        $(this).attr('title', $(this).html())
+    })
+    $('.department li').click(function(){
+        var key = $(this).html();
+        $.ajax({
+                   type: 'get',
+                   url: '/ajax/info.json',
+                   dataType: 'json',
+                   success: function(data){
+                       var title = key, res = data.departments, department, html = [];
+                       if(res){
+                           //M.dialog(res[0], res[1] || '')
+                           for(var i = 0; i < res.length; i++){
+                               if(res[i]['key'] == key){
+                                   department = res[i]
+                                   break;
+                               }
+                           }
+                           if(department){
+                               var persons = department.persons
+                               html.push('<table class="table table-bordered"><thead><tr><th colspan="'+(department.subname ? 2 : 1)+'">部门</th><th>姓名</th><th>职务</th><th>姓名</th><th>职务</th><th>姓名</th><th>职务</th>');
+                               html.push('<tbody>')
+                               html.push('<tr><td rowspan="'+ Math.ceil(persons.length / 3)+'">'+(department.name || '')+'</td>');
+                               if(department.subname){
+                                   html.push('<td rowspan="'+ Math.ceil(persons.length / 3)+'">'+(department.subname || '')+'</td>')
+                               }
+                               html.push('<td>'+(persons[0] ? persons[0].name : '')+'</td><td>'+(persons[0] ? persons[0].position : '')+'</td><td>'+(persons[1] ? persons[1].name : '')+'</td><td>'+(persons[1] ? persons[1].position : '')+'</td><td>'+(persons[2] ? persons[2].name : '')+'</td><td>'+(persons[2] ? persons[2].position : '')+'</td></tr>')
+                           }
+                           if(persons.length > 3){
+                               persons = persons.splice(3);
+                               for( var k = 0; k < Math.ceil(persons.length / 3); k++){
+                                   html.push('<tr>')
+                                   for(var i = 0; i < 3; i++){
+                                       if(persons[3*k + i]){
+                                           html.push('<td>'+(persons[3*k + i].name || '')+'</td><td>'+(persons[3*k + i].position || '')+'</td>')
+                                       }else{
+                                           html.push('<td></td><td></td>')
+                                       }
+
+                                   }
+                                   html.push('</tr>')
+                               }
+                           }
+                           html.push('</tbody>')
+                           html.push('</table>')
+                           M.dialog(title, html.join(''))
+                           $("#wrapper").jScrollPane({
+                                                         showArrows: true
+                                                     })
+                       }
+
+                   }
+               })
+    })
+</script>
+</body>
+</html>

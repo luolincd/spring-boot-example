@@ -1,0 +1,68 @@
+spring:
+  application:
+    name: court
+
+  http:
+    encoding:
+      force: true
+      charset: UTF-8
+      enabled: true
+
+  thymeleaf:
+    mode: HTML5
+    cache: false
+
+  jackson:
+    date-format: YYYY-MM-DD
+    joda-date-time-format: YYYY-MM-DD HH:mm:ss
+
+datasource:
+   druid:
+      url: jdbc:mysql://127.0.0.1:3306/court?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&createDatabaseIfNotExist=true
+      username: root
+      password: No#pass2018
+      filters: stat,slf4j
+      initialSize: 10
+      maxActive: 100
+      maxWait: 60000
+      minIdle: 5
+      timeBetweenEvictionRunsMillis: 60000
+      minEvictableIdleTimeMillis: 300000
+      validationQuery: SELECT 'x'
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      poolPreparedStatements: true
+      maxPoolPreparedStatementPerConnectionSize: 20
+
+remote.datasource:
+     druid:
+        url: jdbc:mysql://150.35.116.20:3306/chnsys?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&createDatabaseIfNotExist=true
+        username: pt
+        password: pt888888
+        filters: stat,slf4j
+        initialSize: 10
+        maxActive: 100
+        maxWait: 60000
+        minIdle: 5
+        timeBetweenEvictionRunsMillis: 60000
+        minEvictableIdleTimeMillis: 300000
+        validationQuery: SELECT 'x'
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+        poolPreparedStatements: true
+        maxPoolPreparedStatementPerConnectionSize: 20
+
+server:
+  port: 8080
+  session:
+    timeout: 30
+
+
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.tech.court.entity
+  check-config-location: true
+  config-location: classpath:mybatis.xml

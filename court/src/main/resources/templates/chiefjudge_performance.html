@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="renderer" content="webkit"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+  <title>员额质效</title>
+  <link rel="stylesheet" href="css/index.css">
+  <link rel="stylesheet" href="css/bootstrap.css">
+  <link rel="stylesheet" href="css/bootstrap-datetimepicker.min.css">
+  <link rel="stylesheet" href="css/bootstrap-select.css">
+  <link rel="stylesheet" href="css/jquery.jscrollpane.css">
+</head>
+<body class="trial">
+<div class="container"></div>
+<div class="header">
+  <img src="images/header/trial_data.png" alt="">
+</div>
+<div class="circle-1">
+  <img src="images/circle_1.png" alt="">
+</div>
+<div class="circle-2">
+  <img src="images/circle_2.png" alt="">
+</div>
+<div class="footer">
+  <img src="images/footer.png" alt="">
+</div>
+<div class="content-box">
+  <div class="con trial">
+    <div class="h clearfix">
+      <div class="breadcrumb">
+        <a class="child" href="index.html">首页</a>
+        <a class="child" href="judgement.html">审判数据</a>
+        <a class="child" href="chiefjudge.html">员额数据</a>
+        <a class="child" href="performance.html">质效数据</a>
+        <span class="cur child" >员额质效</span>
+        <!--<a class="child" href="department.html">部门数据</a>-->
+      </div>
+      <div class="nums">
+
+      </div>
+    </div>
+    <div class="bd clearfix">
+      <div class="chart_a">
+        <div class="cbox" id="wrapper">
+          <div class="form">
+            <dl>
+              <dt>
+                <i class="icon icon-clock"></i>
+                起始时间：
+              </dt>
+              <dd>
+                <div class="input input-date">
+                  <input id="J_start" type="text"/>
+                  <i class="icon-date"></i>
+                </div>
+              </dd>
+            </dl>
+            <dl>
+              <dt>
+                <i class="icon icon-clock"></i>
+                截止时间：
+              </dt>
+              <dd>
+                <div class="input input-date">
+                  <input id="J_end" type="text"/>
+                  <i class="icon-date"></i>
+                </div>
+              </dd>
+            </dl>
+            <dl>
+              <dt>
+                统计单位：
+              </dt>
+              <dd>
+                <div class="tab">
+                  <ul>
+                    <li style="width:178px;" class="active">员额法官</li>
+                  </ul>
+                </div>
+              </dd>
+            </dl>
+            <dl>
+              <dt>
+                统计类型：
+              </dt>
+              <dd>
+                <label for="" class="select">
+                  <select name="" id="J_select_1">
+                    <option value="1">平均审理天数</option>
+                    <option value="2">实际执结率</option>
+                    <option value="3">法定审执限内结案率</option>
+                    <option value="4">服判息诉率</option>
+                  </select>
+                </label>
+              </dd>
+            </dl>
+            <dl>
+              <dt>&nbsp;</dt>
+              <dd><a href="javascript:;" class="submit" id="J_search"></a></dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+      <div class="chart_b">
+        <div class="cb_hd">
+          <div id="chart1" style="background: #000; width: 700px; height: 350px;"></div>
+        </div>
+      </div>
+    </div>
+    <div class="bf">
+
+    </div>
+  </div>
+</div>
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.js"></script>
+<script src="js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript" src="js/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8"></script>
+<script src="js/bootstrap-select.min.js"></script>
+<script src="js/echarts.common.min.js"></script>
+<script src="js/jquery.mousewheel.js"></script>
+<script src="js/jquery.jscrollpane.min.js"></script>
+<script>
+    $("#wrapper").jScrollPane({
+                                  showArrows: true
+                              })
+
+    var timeEnd = $('#J_end').datetimepicker({
+                                                 format: 'yyyy',
+                                                 language: 'zh-CN',
+                                                 weekStart: 1,
+                                                 startView: 4,
+                                                 minView: 4,
+                                                 forceParse: false
+                                             });
+    var timeStart = $('#J_start').datetimepicker({
+                                                     format: 'yyyy',
+                                                     language: 'zh-CN',
+                                                     weekStart: 1,
+                                                     startView: 4,
+                                                     minView: 4,
+                                                     forceParse: false
+                                                 });
+    timeStart.on('changeDate', function () {
+        timeStart.datetimepicker('hide');
+        timeEnd.datetimepicker('setStartDate', $('#J_start').val());
+    })
+    timeEnd.on('changeDate', function () {
+        timeEnd.datetimepicker('hide');
+    })
+    // 搜索
+    $('#J_search').click(function () {
+        loadCaseChart();
+        if ($('#J_start').val() != '' && $('#J_end').val() != '') {
+            $('#countDate').text('数据汇总时间：' + $('#J_start').val() + '至' + $('#J_end').val());
+        }
+    })
+
+    $('.tab li').click(function () {
+        $(this).addClass('active').siblings('li').removeClass('active')
+    })
+
+    // select
+    $('#J_select_1').selectpicker()
+
+    loadCaseChart();
+
+    function loadCaseChart() {
+        var caseChart = echarts.init(document.getElementById('chart1'));
+        $.ajax({
+                   type: "GET",
+                   url: "users/performance-case",
+                   data: {
+                       "startDate": $('#J_start').val(),
+                       "endDate": $('#J_end').val(),
+                       "type": $('#J_select_1').val(),
+                       "unit": $('.tab li.active').attr('value')
+                   },
+                   dataType: "json",
+                   contentType: "application/json; charset=utf-8",
+                   success: function (json) {
+                       var result = eval(json);
+                       if (result) {
+                           caseChart.setOption({
+                                                   legend: {
+                                                       textStyle: {
+                                                           color: '#fff'
+                                                       },
+                                                       selectedMode: false,
+                                                       width: '70%',
+                                                       left: '49%'
+                                                   },
+                                                   toolbox: {
+                                                       feature: {
+                                                           magicType: {show: true, type: ['line', 'bar']},
+                                                           saveAsImage: {show: true}
+                                                       },
+                                                       iconStyle: {
+                                                           borderColor: '#2f81c0'
+                                                       }
+                                                   },
+                                                   tooltip: {
+                                                       trigger: 'axis',
+                                                       axisPointer: {
+                                                           type: 'cross',
+                                                           crossStyle: {
+                                                               color: '#999'
+                                                           }
+                                                       }
+                                                   },
+                                                   xAxis: [{
+                                                       type: 'category',
+                                                       data: result.months,
+                                                       axisPointer: {
+                                                           type: 'shadow'
+                                                       },
+                                                       axisLine: {
+                                                           lineStyle: {
+                                                               color: '#1e3760',
+                                                               width: 3
+                                                           }
+                                                       },
+                                                       axisLabel: {
+                                                           interval: 0,
+                                                           formatter:function(value)
+                                                           {
+                                                               return value.split("").join("\n");
+                                                           }
+                                                       },
+                                                       splitLine: {
+                                                           lineStyle: {
+                                                               color: ['#1e3760'],
+                                                               width: 3
+                                                           }
+                                                       }
+                                                   }],
+                                                   yAxis: [
+                                                       {
+                                                           type: 'value',
+                                                           axisLine: {
+                                                               lineStyle: {
+                                                                   color: '#1e3760',
+                                                                   width: 3
+                                                               }
+                                                           },
+                                                           splitLine: {
+                                                               lineStyle: {
+                                                                   color: ['#1e3760'],
+                                                                   width: 3
+                                                               }
+                                                           }
+                                                       }
+                                                   ],
+                                                   series: [
+                                                       {
+                                                           name: result.type,
+                                                           type: 'bar',
+                                                           barMaxWidth: 15,
+                                                           data: result.accpetNumber,
+                                                           itemStyle: {
+                                                               color: '#2e7fbd'
+                                                           }
+                                                       },
+                                                   ],
+                                                   textStyle: {
+                                                       color: '#49caf6'
+                                                   }
+                                               });
+                       }
+                   },
+                   error: function (error) {
+                       //alert("调用出错" + error.responseText);
+                   }
+               });
+
+    }
+</script>
+</body>
+</html>
