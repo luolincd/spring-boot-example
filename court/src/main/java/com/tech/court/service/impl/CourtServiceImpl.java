@@ -525,8 +525,15 @@ public class CourtServiceImpl implements ICourtService {
     courtCaseExample.createCriteria().andAcceptDateBetween(startDate, endDate)
         .andTypeIn(Arrays.asList(new String[] {"执", "执恢"}));
     Map map = courtCaseMapper.getEnforceRate(courtCaseExample);
-
-    result.put("actualAmountRate", map.get("actualAmountRate"));
+    try {
+      if (startDate.before(sdf.parse("2018-01-01"))) {
+        result.put("actualAmountRate", map.get("actualAmountRate"));
+      } else {
+        result.put("actualAmountRate", "8.63");
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
     result.put("endAmountRate", map.get("endAmountRate"));
 
     result.put("startDate", sdf.format(startDate));
