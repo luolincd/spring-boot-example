@@ -111,7 +111,7 @@ public class UserServiceImpl {
     List<BarData> data = Lists.newArrayList();
     if ("1".equals(type) || StringUtils.isEmpty(type)) {
       CourtCaseExample courtCaseExample = new CourtCaseExample();
-      courtCaseExample.createCriteria().andAcceptDateBetween(startDate, endDate)
+      courtCaseExample.createCriteria().andRegisterDateBetween(startDate, endDate)
           .andUndertakeUserIn(Arrays.asList(getJudeges(startDate)));
       data = courtCaseMapper.countChiefJudge(courtCaseExample);
     } else if ("2".equals(type)) {
@@ -120,20 +120,15 @@ public class UserServiceImpl {
           .andUndertakeUserIn(Arrays.asList(getJudeges(startDate)));
       data = courtCaseMapper.countChiefJudge(courtCaseExample);
     } else if ("3".equals(type)) {
-      CourtCaseExample courtCaseExample = new CourtCaseExample();
-      courtCaseExample.createCriteria().andAcceptDateBetween(startDate, endDate)
-          .andStatusNotIn(Arrays.asList(new String[] {"归档", "结案", "中止"}))
-          .andUndertakeUserIn(Arrays.asList(getJudeges(startDate)));
-      data = courtCaseMapper.countChiefJudge(courtCaseExample);
+      data = courtCaseMapper.countJudgeNoneEndCases(endDate);
     } else if ("4".equals(type)) {
       CourtCaseExample courtCaseExample = new CourtCaseExample();
-      courtCaseExample.createCriteria().andAcceptDateBetween(startDate, endDate)
+      courtCaseExample.createCriteria().andRegisterDateBetween(startDate, endDate)
           .andUndertakeUserIn(Arrays.asList(getJudeges(startDate)));
       List<BarData> totalCases = courtCaseMapper.countChiefJudge(courtCaseExample);
       courtCaseExample = new CourtCaseExample();
-      courtCaseExample.createCriteria().andAcceptDateBetween(startDate, endDate)
-          //.andActualEndDateBetween(startDate, endDate)
-          .andStatusIn(Arrays.asList(new String[] {"归档", "结案", "中止"}))
+      courtCaseExample.createCriteria().andRegisterDateBetween(startDate, endDate)
+          .andActualEndDateBetween(startDate, endDate)
           .andUndertakeUserIn(Arrays.asList(getJudeges(startDate)));
       List<BarData> endCases = courtCaseMapper.countChiefJudge(courtCaseExample);
       Map<String, Long> endCaseMap = endCases.stream()
@@ -146,7 +141,7 @@ public class UserServiceImpl {
         }
         BigDecimal rate = endNumber.divide(new BigDecimal(totalCases.get(i).getNumber()), 4, RoundingMode.HALF_UP)
             .setScale(4,
-                BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100)).setScale(2,RoundingMode.HALF_UP);
+                BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100)).setScale(2, RoundingMode.HALF_UP);
         rateBos.add(new RateBo(totalCases.get(i).getDateUnit(), rate));
         Collections.sort(rateBos);
       }
@@ -192,16 +187,16 @@ public class UserServiceImpl {
     List<String> names = getChiefJudgeNames();
     if ("1".equals(type) || StringUtils.isEmpty(type)) {//平均审理天数
       CourtCaseExample courtCaseExample = new CourtCaseExample();
-      courtCaseExample.createCriteria().andAcceptDateBetween(startDate, endDate)
+      courtCaseExample.createCriteria().andActualEndDateBetween(startDate, endDate)
           .andUndertakeUserIn(Arrays.asList(getJudeges(startDate)));
       data = courtCaseMapper.countJudgeDaysByUndertakeUser(courtCaseExample);
     } else if ("2".equals(type)) {//执结率
       CourtCaseExample courtCaseExample = new CourtCaseExample();
-      courtCaseExample.createCriteria().andAcceptDateBetween(startDate, endDate)
+      courtCaseExample.createCriteria().andActualEndDateBetween(startDate, endDate)
           .andUndertakeUserIn(Arrays.asList(getJudeges(startDate))).andTypeIn(Arrays.asList(new String[] {"执", "执恢"}));
       List<BarData> totalCases = courtCaseMapper.countChiefJudge(courtCaseExample);
       courtCaseExample = new CourtCaseExample();
-      courtCaseExample.createCriteria().andAcceptDateBetween(startDate, endDate)
+      courtCaseExample.createCriteria().andActualEndDateBetween(startDate, endDate)
           .andUndertakeUserIn(Arrays.asList(getJudeges(startDate)))
           .andTypeIn(Arrays.asList(new String[] {"执", "执恢"}))
           .andEndMethodIn(Arrays
@@ -217,7 +212,7 @@ public class UserServiceImpl {
         }
         BigDecimal rate = endNumber.divide(new BigDecimal(totalCases.get(i).getNumber()), 4, RoundingMode.HALF_UP)
             .setScale(4,
-                BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100)).setScale(2,RoundingMode.HALF_UP);
+                BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100)).setScale(2, RoundingMode.HALF_UP);
         rateBos.add(new RateBo(totalCases.get(i).getDateUnit(), rate));
         Collections.sort(rateBos);
       }

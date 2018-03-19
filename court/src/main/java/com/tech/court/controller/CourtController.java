@@ -55,7 +55,7 @@ public class CourtController {
   }
 
   @GetMapping(value = "/case-count")
-  public CaseCountBo getCaseCount(StatisticsQuery statisticsQuery) throws ParseException {
+  public CaseCountBo getCaseCount(StatisticsQuery statisticsQuery) throws Exception {
     log.info("startDate:{},endDate:{}", statisticsQuery.getStartDate(), statisticsQuery.getEndDate());
     Date startDate = null;
     Date endDate = null;

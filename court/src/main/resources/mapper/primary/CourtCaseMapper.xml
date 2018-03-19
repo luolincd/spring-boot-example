@@ -608,7 +608,7 @@
   </select>
 
   <select id="getEnforceRate" parameterType="com.tech.court.entity.CourtCaseExample" resultType="map">
-    select round(sum(actual_amount)/sum(end_amount)*100,2) actualAmountRate,round(sum(end_amount)/sum(register_amount)*100,2) endAmountRate
+    select round(sum(actual_amount)/sum(register_amount)*100,2) actualAmountRate,round(sum(end_amount)/sum(register_amount)*100,2) endAmountRate
     from court_case
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
@@ -662,6 +662,18 @@
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
+    group by dateUnit
+    order by number asc
+  </select>
+
+  <select id="countNoneEndCases" resultType="java.lang.Long">
+    select count(*) from court_case
+    where (register_date &lt;= #{queryDate}) and (actual_end_date &gt; #{queryDate} or actual_end_date is null)
+  </select>
+
+  <select id="countJudgeNoneEndCases" resultType="com.tech.court.domain.BarData">
+    select undertake_user as dateUnit,count(*) number from court_case
+    where (register_date &lt;= #{queryDate}) and (actual_end_date &gt; #{queryDate} or actual_end_date is null)
     group by dateUnit
     order by number asc
   </select>

@@ -21,6 +21,7 @@ import com.tech.court.entity.CourtCaseExample;
 import com.tech.court.entity.CourtLive;
 import com.tech.court.entity.CourtLiveExample;
 import com.tech.court.service.ICourtService;
+import com.tech.court.util.DateUtil;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -40,7 +41,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CourtServiceImpl implements ICourtService {
 
-  public static final List<String> ENFORCE_TYPE = Arrays.asList(new String[] {"执", "执恢", "执保", "执异"});
+  public static final List<String> ENFORCE_TYPE = Arrays.asList(new String[] {"执", "执恢"});
   @Autowired
   private CourtLiveMapper courtLiveMapper;
 
@@ -48,6 +49,12 @@ public class CourtServiceImpl implements ICourtService {
   private CourtCaseMapper courtCaseMapper;
 
   static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+  public static final List<String> months = Arrays
+      .asList(new String[] {"-01-31", "-02-31", "-03-31", "-04-31", "-05-31", "-06-31", "-07-31", "-08-31", "-09-31",
+          "-10-31", "-11-31", "-12-31"});
+
+  public static final List<String> quarters = Arrays.asList(new String[] {"-03-31", "-06-31", "-09-31", "-12-31"});
 
   @Override
   public Map getCourtLiveSummary() {
@@ -190,49 +197,51 @@ public class CourtServiceImpl implements ICourtService {
     }
     Map result = Maps.newHashMap();
     CourtCaseExample courtCaseExample = new CourtCaseExample();
-    courtCaseExample.createCriteria().andAcceptDateBetween(startDate, endDate).andStatusEqualTo("提档");
+    courtCaseExample.createCriteria().andRegisterDateBetween(startDate, endDate).andStatusEqualTo("提档");
     long startNumber = courtCaseMapper.countByExample(courtCaseExample);
     result.put("startNumber", startNumber);
 
     courtCaseExample = new CourtCaseExample();
-    courtCaseExample.createCriteria().andAcceptDateBetween(startDate, endDate).andStatusEqualTo("审理");
+    courtCaseExample.createCriteria().andRegisterDateBetween(startDate, endDate).andStatusEqualTo("审理");
     result.put("oldNumber", courtCaseMapper.countByExample(courtCaseExample));
 
     courtCaseExample = new CourtCaseExample();
-    courtCaseExample.createCriteria().andAcceptDateBetween(startDate, endDate)
-        .andStatusIn(Arrays.asList(new String[] {"结案", "归档", "中止"}));
+    courtCaseExample.createCriteria().andActualEndDateIsNotNull().andActualEndDateBetween(startDate, endDate);
+    //.andStatusIn(Arrays.asList(new String[] {"结案", "归档", "中止"}));
     long endNumber = courtCaseMapper.countByExample(courtCaseExample);
     result.put("endNumber", endNumber);
 
-    courtCaseExample = new CourtCaseExample();
-    courtCaseExample.createCriteria().andAcceptDateBetween(startDate, endDate)
-        .andStatusIn(Arrays.asList(new String[] {"审理", "提档", "移送"}));
-    result.put("noneEndNumber", courtCaseMapper.countByExample(courtCaseExample));
+    result.put("noneEndNumber", courtCaseMapper.countNoneEndCases(endDate));
 
     courtCaseExample = new CourtCaseExample();
-    courtCaseExample.createCriteria().andAcceptDateBetween(startDate, endDate);
+    courtCaseExample.createCriteria().andRegisterDateBetween(startDate, endDate);
     long totalNumber = courtCaseMapper.countByExample(courtCaseExample);
     result.put("totalNumber", totalNumber);
+
+    courtCaseExample = new CourtCaseExample();
+    courtCaseExample.createCriteria().andRegisterDateBetween(startDate, endDate)
+        .andActualEndDateBetween(startDate, endDate);
     result.put("endRate",
-        new BigDecimal(endNumber).divide(new BigDecimal(totalNumber), 4, RoundingMode.HALF_UP)
+        new BigDecimal(courtCaseMapper.countByExample(courtCaseExample))
+            .divide(new BigDecimal(totalNumber), 4, RoundingMode.HALF_UP)
             .multiply(new BigDecimal(100)));
 
     courtCaseExample = new CourtCaseExample();
-    courtCaseExample.createCriteria().andAcceptDateBetween(startDate, endDate).andEndMethodEqualTo("判决");
+    courtCaseExample.createCriteria().andRegisterDateBetween(startDate, endDate).andEndMethodEqualTo("判决");
     long judgeNumber = courtCaseMapper.countByExample(courtCaseExample);
     result.put("judgeRate",
         new BigDecimal(judgeNumber).divide(new BigDecimal(endNumber), 4, RoundingMode.HALF_UP)
             .multiply(new BigDecimal(100)));
 
     courtCaseExample = new CourtCaseExample();
-    courtCaseExample.createCriteria().andAcceptDateBetween(startDate, endDate).andEndMethodEqualTo("调解");
+    courtCaseExample.createCriteria().andRegisterDateBetween(startDate, endDate).andEndMethodEqualTo("调解");
     long conciliation = courtCaseMapper.countByExample(courtCaseExample);
     result.put("conciliationRate",
         new BigDecimal(conciliation).divide(new BigDecimal(endNumber), 4, RoundingMode.HALF_UP)
             .multiply(new BigDecimal(100)));
 
     courtCaseExample = new CourtCaseExample();
-    courtCaseExample.createCriteria().andAcceptDateBetween(startDate, endDate)
+    courtCaseExample.createCriteria().andRegisterDateBetween(startDate, endDate)
         .andEndMethodIn(Arrays.asList(new String[] {"准予撤诉", "按撤诉处理"}));
     long dropNumber = courtCaseMapper.countByExample(courtCaseExample);
     result.put("dropRate",
@@ -240,7 +249,7 @@ public class CourtServiceImpl implements ICourtService {
             .multiply(new BigDecimal(100)));
 
     courtCaseExample = new CourtCaseExample();
-    courtCaseExample.createCriteria().andAcceptDateBetween(startDate, endDate).andEndMethodEqualTo("驳回起诉");
+    courtCaseExample.createCriteria().andRegisterDateBetween(startDate, endDate).andEndMethodEqualTo("驳回起诉");
     long rejectNumber = courtCaseMapper.countByExample(courtCaseExample);
     result.put("rejectRate",
         new BigDecimal(rejectNumber).divide(new BigDecimal(endNumber), 4, RoundingMode.HALF_UP)
@@ -259,7 +268,7 @@ public class CourtServiceImpl implements ICourtService {
    * @return
    */
   @Override
-  public CaseCountBo countCase(Date startDate, Date endDate, String unit, String type) {
+  public CaseCountBo countCase(Date startDate, Date endDate, String unit, String type) throws Exception {
     if (startDate == null || endDate == null) {
       startDate = getStartDate();
       endDate = new Date();
@@ -267,30 +276,66 @@ public class CourtServiceImpl implements ICourtService {
     List<BarData> data = Lists.newArrayList();
     if ("1".equals(type) || StringUtils.isEmpty(type)) {
       CourtCaseExample courtCaseExample = new CourtCaseExample();
-      courtCaseExample.createCriteria().andAcceptDateBetween(startDate, endDate);
+      courtCaseExample.createCriteria().andRegisterDateBetween(startDate, endDate);
       data = queryCase(unit, courtCaseExample);
     } else if ("2".equals(type)) {
       CourtCaseExample courtCaseExample = new CourtCaseExample();
       courtCaseExample.createCriteria().andActualEndDateBetween(startDate, endDate);
       data = queryEndCase(unit, data, courtCaseExample);
-    } else if ("3".equals(type)) {
-      CourtCaseExample courtCaseExample = new CourtCaseExample();
-      courtCaseExample.createCriteria().andAcceptDateBetween(startDate, endDate)
-          .andStatusNotIn(Arrays.asList(new String[] {"归档", "结案", "中止"}));
-      data = queryCase(unit, courtCaseExample);
+    } else if ("3".equals(type)) {//未结案数，逻辑特殊
+      Calendar calendar = Calendar.getInstance();
+      calendar.setTime(startDate);
+      int startYear = calendar.get(Calendar.YEAR);
+      Calendar end = Calendar.getInstance();
+      calendar.setTime(endDate);
+      int endYear = calendar.get(Calendar.YEAR);
+      boolean isCurrentYear = false;
+      if (startYear == endYear) {
+        isCurrentYear = true;
+        endYear++;
+      }
+      if ("month".equals(unit) || StringUtils.isEmpty(unit)) {
+        for (int start = startYear; start < endYear; start++) {
+          for (String month : months) {
+            Date queryDate = sdf.parse(String.valueOf(start) + month);
+            if (queryDate.getMonth() > endDate.getMonth() && isCurrentYear) {
+              continue;
+            }
+            data.add(new BarData(String.valueOf(start) + month.substring(0, 3),
+                courtCaseMapper.countNoneEndCases(queryDate)));
+          }
+        }
+      } else if ("quarter".equals(unit)) {
+        for (int start = startYear; start < endYear; start++) {
+          for (String month : quarters) {
+            Date queryDate = sdf.parse(String.valueOf(start) + month);
+            if (DateUtil.getSeason(queryDate) > DateUtil.getSeason(endDate) && isCurrentYear) {
+              continue;
+            }
+            data.add(new BarData(String.valueOf(start) + month.substring(0, 3),
+                courtCaseMapper.countNoneEndCases(queryDate)));
+          }
+        }
+      } else if ("year".equals(unit)) {
+        for (int start = startYear; start < endYear; start++) {
+          Date queryDate = sdf.parse(String.valueOf(start) + "-12-31");
+          data.add(new BarData(String.valueOf(start),
+              courtCaseMapper.countNoneEndCases(queryDate)));
+        }
+      }
     } else if ("4".equals(type)) {
       CourtCaseExample courtCaseExample = new CourtCaseExample();
-      courtCaseExample.createCriteria().andAcceptDateBetween(startDate, endDate);
+      courtCaseExample.createCriteria().andRegisterDateBetween(startDate, endDate);
       List<BarData> totalCases = queryCase(unit, courtCaseExample);
       courtCaseExample = new CourtCaseExample();
       courtCaseExample.createCriteria().andAcceptDateBetween(startDate, endDate)
-          .andActualEndDateBetween(startDate, endDate)
-          .andStatusIn(Arrays.asList(new String[] {"归档", "结案", "中止"}));
+          .andActualEndDateBetween(startDate, endDate);
+      //.andStatusIn(Arrays.asList(new String[] {"归档", "结案", "中止"}));
       List<BarData> endCases = queryCase(unit, courtCaseExample);
       for (int i = 0; i < totalCases.size(); i++) {
         log.info("endNumber:{},totalNumber:{}", endCases.get(i).getNumber(), totalCases.get(i).getNumber());
         Long rate = new BigDecimal(endCases.get(i).getNumber())
-            .divide(new BigDecimal(totalCases.get(i).getNumber()), 2, RoundingMode.HALF_UP)
+            .divide(new BigDecimal(totalCases.get(i).getNumber()), 4, RoundingMode.HALF_UP)
             .multiply(new BigDecimal(100)).longValue();
         data.add(new BarData(totalCases.get(i).getDateUnit(), rate));
       }
@@ -374,15 +419,17 @@ public class CourtServiceImpl implements ICourtService {
       }
     } else if ("2".equals(type)) {//执结率
       CourtCaseExample courtCaseExample = new CourtCaseExample();
-      courtCaseExample.createCriteria().andAcceptDateBetween(startDate, endDate)
+      courtCaseExample.createCriteria().andActualEndDateBetween(startDate, endDate)
           .andTypeIn(Arrays.asList(new String[] {"执", "执恢"}));
-      List<BarData> totalCases = queryCase(unit, courtCaseExample);
+      List<BarData> totalCases = new ArrayList<>();
+      totalCases = queryEndCase(unit, totalCases, courtCaseExample);
       courtCaseExample = new CourtCaseExample();
-      courtCaseExample.createCriteria().andAcceptDateBetween(startDate, endDate)
+      courtCaseExample.createCriteria().andActualEndDateBetween(startDate, endDate)
           .andEndMethodIn(Arrays
               .asList(new String[] {"驳回申请", "强制执行完毕", "销案", "执行完毕"}))
           .andTypeIn(Arrays.asList(new String[] {"执", "执恢"}));
-      List<BarData> endCases = queryCase(unit, courtCaseExample);
+      List<BarData> endCases = new ArrayList<>();
+      endCases = queryEndCase(unit, endCases, courtCaseExample);
       for (int i = 0; i < totalCases.size(); i++) {
         BigDecimal endNumber;
         if (i > endCases.size() - 1) {
@@ -456,12 +503,12 @@ public class CourtServiceImpl implements ICourtService {
       startDate = getStartDate();
     }
     CourtCaseExample courtCaseExample = new CourtCaseExample();
-    courtCaseExample.createCriteria().andAcceptDateBetween(startDate, endDate)
+    courtCaseExample.createCriteria().andRegisterDateBetween(startDate, endDate)
         .andTypeIn(ENFORCE_TYPE);
     List<BarData> accpectCase = courtCaseMapper
         .countAcceptCase(courtCaseExample);
     courtCaseExample = new CourtCaseExample();
-    courtCaseExample.createCriteria().andEndDateBetween(startDate, endDate)
+    courtCaseExample.createCriteria().andActualEndDateBetween(startDate, endDate)
         .andTypeIn(ENFORCE_TYPE);
     List<BarData> endCase = courtCaseMapper
         .countEndCase(courtCaseExample);
@@ -495,7 +542,8 @@ public class CourtServiceImpl implements ICourtService {
     }
     Map result = Maps.newHashMap();
     CourtCaseExample courtCaseExample = new CourtCaseExample();
-    courtCaseExample.createCriteria().andAcceptDateBetween(startDate, endDate)
+    courtCaseExample.createCriteria().andRegisterDateBetween(startDate, endDate)
+        .andActualEndDateBetween(startDate, endDate)
         .andTypeIn(ENFORCE_TYPE);
     Map amount = courtCaseMapper.sumEnforceAmount(courtCaseExample);
 
@@ -505,14 +553,14 @@ public class CourtServiceImpl implements ICourtService {
     result.put("abandonAmount", amount.get("abandonAmount"));
 
     courtCaseExample = new CourtCaseExample();
-    courtCaseExample.createCriteria().andAcceptDateBetween(startDate, endDate)
+    courtCaseExample.createCriteria().andActualEndDateBetween(startDate, endDate)
         .andEndMethodIn(Arrays
             .asList(new String[] {"驳回申请", "强制执行完毕", "销案", "执行完毕"})).andTypeIn(Arrays.asList(new String[] {"执", "执恢"}));
     long endNumber = courtCaseMapper.countByExample(courtCaseExample);
     result.put("endNumber", endNumber);
 
     courtCaseExample = new CourtCaseExample();
-    courtCaseExample.createCriteria().andAcceptDateBetween(startDate, endDate)
+    courtCaseExample.createCriteria().andActualEndDateBetween(startDate, endDate)
         .andTypeIn(Arrays.asList(new String[] {"执", "执恢"}));
     long totalNumber = courtCaseMapper.countByExample(courtCaseExample);
     BigDecimal endRate = new BigDecimal(endNumber).divide(new BigDecimal(totalNumber), 4, RoundingMode.HALF_UP)
@@ -522,10 +570,11 @@ public class CourtServiceImpl implements ICourtService {
     percent.setMaximumFractionDigits(2);
     result.put("endRate", percent.format(endRate.doubleValue()));
     courtCaseExample = new CourtCaseExample();
-    courtCaseExample.createCriteria().andAcceptDateBetween(startDate, endDate)
+    courtCaseExample.createCriteria().andActualEndDateBetween(startDate, endDate)
         .andTypeIn(Arrays.asList(new String[] {"执", "执恢"}));
     Map map = courtCaseMapper.getEnforceRate(courtCaseExample);
-    try {
+    result.put("actualAmountRate", map.get("actualAmountRate"));
+    /*try {
       if (startDate.before(sdf.parse("2018-01-01"))) {
         result.put("actualAmountRate", map.get("actualAmountRate"));
       } else {
@@ -533,7 +582,7 @@ public class CourtServiceImpl implements ICourtService {
       }
     } catch (Exception e) {
       e.printStackTrace();
-    }
+    }*/
     result.put("endAmountRate", map.get("endAmountRate"));
 
     result.put("startDate", sdf.format(startDate));

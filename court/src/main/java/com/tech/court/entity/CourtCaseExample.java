@@ -1702,6 +1702,7 @@ public class CourtCaseExample {
             addCriterion("judge_days not between", value1, value2, "judgeDays");
             return (Criteria) this;
         }
+
     }
 
     /**
@@ -1798,4 +1799,5 @@ public class CourtCaseExample {
             this(condition, value, secondValue, null);
         }
     }
+
 }

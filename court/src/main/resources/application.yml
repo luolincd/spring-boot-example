@@ -8,7 +8,7 @@ spring:
       charset: UTF-8
       enabled: true
     multipart:
-      max-file-size: 2MB
+      max-file-size: 10MB
 
   profiles:
     active: dev

@@ -19,7 +19,7 @@ public interface ICourtService {
 
   Map getCourtLiveSummary();
 
-  CaseCountBo countCase(Date startDate, Date endDate, String unit, String type);
+  CaseCountBo countCase(Date startDate, Date endDate, String unit, String type) throws Exception;
 
   CaseCountBo countPerformance(Date startDate, Date endDate, String unit, String type);
 

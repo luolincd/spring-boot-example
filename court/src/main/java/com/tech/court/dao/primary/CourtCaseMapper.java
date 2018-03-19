@@ -4,12 +4,18 @@ import com.tech.court.domain.BarData;
 import com.tech.court.domain.JudgementStatistics;
 import com.tech.court.entity.CourtCase;
 import com.tech.court.entity.CourtCaseExample;
+
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
 public interface CourtCaseMapper {
+    Long countNoneEndCases(@Param("queryDate") Date queryDate);
+
+    List<BarData> countJudgeNoneEndCases(@Param("queryDate") Date queryDate);
+
     List<BarData> countAcceptCase(CourtCaseExample example);
 
     List<BarData> countQuarterAcceptCase(CourtCaseExample example);
