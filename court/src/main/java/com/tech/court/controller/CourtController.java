@@ -138,6 +138,7 @@ public class CourtController {
     return courtService.getDepartment(startDate, endDate);
   }
 
+  /*
   @GetMapping(value = "/department-case")
   public CaseCountBo getDepartmentCase(StatisticsQuery statisticsQuery) throws ParseException {
     log.info("startDate:{},endDate:{}", statisticsQuery.getStartDate(), statisticsQuery.getEndDate());
@@ -148,7 +149,7 @@ public class CourtController {
       endDate = sdfDetail.parse(statisticsQuery.getEndDate());
     }
     return courtService.countDepartmentCase(startDate, endDate);
-  }
+  }*/
 
   @GetMapping(value = "/department-summary")
   public Map getDepartmentSummary(StatisticsQuery statisticsQuery) throws ParseException {

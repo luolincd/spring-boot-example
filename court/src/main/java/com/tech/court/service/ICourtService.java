@@ -40,6 +40,4 @@ public interface ICourtService {
   Map getPerformanceSummay(Date startDate, Date endDate);
 
   Map getDepartmentSummary(Date startDate, Date endDate);
-
-  CaseCountBo countDepartmentCase(Date startDate, Date endDate);
 }

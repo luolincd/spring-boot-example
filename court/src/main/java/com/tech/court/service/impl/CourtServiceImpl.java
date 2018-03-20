@@ -16,6 +16,9 @@ import com.tech.court.domain.CaseCountBo;
 import com.tech.court.domain.CaseQuery;
 import com.tech.court.domain.CourtLiveBo;
 import com.tech.court.domain.JudgementStatistics;
+import com.tech.court.domain.MutipleBarBo;
+import com.tech.court.domain.RateBarBo;
+import com.tech.court.domain.RateBo;
 import com.tech.court.entity.CourtCase;
 import com.tech.court.entity.CourtCaseExample;
 import com.tech.court.entity.CourtLive;
@@ -30,8 +33,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -54,7 +60,7 @@ public class CourtServiceImpl implements ICourtService {
       .asList(new String[] {"-01-31", "-02-31", "-03-31", "-04-31", "-05-31", "-06-31", "-07-31", "-08-31", "-09-31",
           "-10-31", "-11-31", "-12-31"});
 
-  public static final List<String> quarters = Arrays.asList(new String[] {"-03-31", "-06-31", "-09-31", "-12-31"});
+  public static final List<String> quarters = Arrays.asList(new String[] {"-03-31", "-06-30", "-09-30", "-12-31"});
 
   @Override
   public Map getCourtLiveSummary() {
@@ -207,11 +213,11 @@ public class CourtServiceImpl implements ICourtService {
 
     courtCaseExample = new CourtCaseExample();
     courtCaseExample.createCriteria().andActualEndDateIsNotNull().andActualEndDateBetween(startDate, endDate);
-    //.andStatusIn(Arrays.asList(new String[] {"结案", "归档", "中止"}));
     long endNumber = courtCaseMapper.countByExample(courtCaseExample);
     result.put("endNumber", endNumber);
 
-    result.put("noneEndNumber", courtCaseMapper.countNoneEndCases(endDate));
+    long noneEndNumber = courtCaseMapper.countNoneEndCases(endDate);
+    result.put("noneEndNumber", noneEndNumber);
 
     courtCaseExample = new CourtCaseExample();
     courtCaseExample.createCriteria().andRegisterDateBetween(startDate, endDate);
@@ -222,8 +228,8 @@ public class CourtServiceImpl implements ICourtService {
     courtCaseExample.createCriteria().andRegisterDateBetween(startDate, endDate)
         .andActualEndDateBetween(startDate, endDate);
     result.put("endRate",
-        new BigDecimal(courtCaseMapper.countByExample(courtCaseExample))
-            .divide(new BigDecimal(totalNumber), 4, RoundingMode.HALF_UP)
+        new BigDecimal(endNumber)
+            .divide(new BigDecimal(endNumber).add(new BigDecimal(noneEndNumber)), 4, RoundingMode.HALF_UP)
             .multiply(new BigDecimal(100)));
 
     courtCaseExample = new CourtCaseExample();
@@ -301,8 +307,8 @@ public class CourtServiceImpl implements ICourtService {
             if (queryDate.getMonth() > endDate.getMonth() && isCurrentYear) {
               continue;
             }
-            data.add(new BarData(String.valueOf(start) + month.substring(0, 3),
-                courtCaseMapper.countNoneEndCases(queryDate)));
+            data.add(new BarData(String.valueOf(start).substring(2, 4) + "年" + month.substring(1, 3) + "月",
+                courtCaseMapper.countNoneEndCases(queryDate),null));
           }
         }
       } else if ("quarter".equals(unit)) {
@@ -312,15 +318,16 @@ public class CourtServiceImpl implements ICourtService {
             if (DateUtil.getSeason(queryDate) > DateUtil.getSeason(endDate) && isCurrentYear) {
               continue;
             }
-            data.add(new BarData(String.valueOf(start) + month.substring(0, 3),
-                courtCaseMapper.countNoneEndCases(queryDate)));
+            log.info("season:{},query data:{}", DateUtil.getSeason(queryDate), queryDate.toString());
+            data.add(new BarData(String.valueOf(start).substring(2, 4) + "年" + DateUtil.getSeason(queryDate) + "季度",
+                courtCaseMapper.countNoneEndCases(queryDate),null));
           }
         }
       } else if ("year".equals(unit)) {
         for (int start = startYear; start < endYear; start++) {
           Date queryDate = sdf.parse(String.valueOf(start) + "-12-31");
-          data.add(new BarData(String.valueOf(start),
-              courtCaseMapper.countNoneEndCases(queryDate)));
+          data.add(new BarData(String.valueOf(start).substring(2, 4) + "年",
+              courtCaseMapper.countNoneEndCases(queryDate),null));
         }
       }
     } else if ("4".equals(type)) {
@@ -330,23 +337,31 @@ public class CourtServiceImpl implements ICourtService {
       courtCaseExample = new CourtCaseExample();
       courtCaseExample.createCriteria().andAcceptDateBetween(startDate, endDate)
           .andActualEndDateBetween(startDate, endDate);
-      //.andStatusIn(Arrays.asList(new String[] {"归档", "结案", "中止"}));
       List<BarData> endCases = queryCase(unit, courtCaseExample);
       for (int i = 0; i < totalCases.size(); i++) {
         log.info("endNumber:{},totalNumber:{}", endCases.get(i).getNumber(), totalCases.get(i).getNumber());
-        Long rate = new BigDecimal(endCases.get(i).getNumber())
+        BigDecimal rate = new BigDecimal(endCases.get(i).getNumber())
             .divide(new BigDecimal(totalCases.get(i).getNumber()), 4, RoundingMode.HALF_UP)
-            .multiply(new BigDecimal(100)).longValue();
-        data.add(new BarData(totalCases.get(i).getDateUnit(), rate));
+            .multiply(new BigDecimal(100)).setScale(2, RoundingMode.HALF_UP);
+        data.add(new BarData(totalCases.get(i).getDateUnit(), rate.longValue(),rate.toString()));
       }
+      List<String> accpetNumber = new ArrayList<>();
+      List<String> months = new ArrayList<>();
+      for (int i = 0; i < data.size(); i++) {
+        months.add(data.get(i).getDateUnit());
+        accpetNumber.add(data.get(i).getNumberText());
+      }
+      return new CaseCountBo(accpetNumber, null, months, TypeEnum.getName(Integer.parseInt(type)),
+          convertToMutipleBar(startDate, endDate, unit, data));
     }
-    List<Long> accpetNumber = new ArrayList<>();
+    List<String> accpetNumber = new ArrayList<>();
     List<String> months = new ArrayList<>();
     for (int i = 0; i < data.size(); i++) {
       months.add(data.get(i).getDateUnit());
-      accpetNumber.add(data.get(i).getNumber());
+      accpetNumber.add(String.valueOf(data.get(i).getNumber()));
     }
-    return new CaseCountBo(accpetNumber, null, months, TypeEnum.getName(Integer.parseInt(type)));
+    return new CaseCountBo(accpetNumber, null, months, TypeEnum.getName(Integer.parseInt(type)),
+        convertToMutipleBar(startDate, endDate, unit, data));
   }
 
   private List<BarData> queryEndCase(final String unit, List<BarData> data,
@@ -426,7 +441,7 @@ public class CourtServiceImpl implements ICourtService {
       courtCaseExample = new CourtCaseExample();
       courtCaseExample.createCriteria().andActualEndDateBetween(startDate, endDate)
           .andEndMethodIn(Arrays
-              .asList(new String[] {"驳回申请", "强制执行完毕", "销案", "执行完毕"}))
+              .asList(new String[] {"自动履行完毕", "强制执行完毕", "执行完毕"}))
           .andTypeIn(Arrays.asList(new String[] {"执", "执恢"}));
       List<BarData> endCases = new ArrayList<>();
       endCases = queryEndCase(unit, endCases, courtCaseExample);
@@ -437,10 +452,10 @@ public class CourtServiceImpl implements ICourtService {
         } else {
           endNumber = new BigDecimal(endCases.get(i).getNumber());
         }
-        Long rate = endNumber
-            .divide(new BigDecimal(totalCases.get(i).getNumber()), 2, RoundingMode.HALF_UP)
-            .multiply(new BigDecimal(100)).longValue();
-        data.add(new BarData(totalCases.get(i).getDateUnit(), rate));
+        BigDecimal rate = endNumber
+            .divide(new BigDecimal(totalCases.get(i).getNumber()), 4, RoundingMode.HALF_UP)
+            .multiply(new BigDecimal(100)).setScale(2, RoundingMode.HALF_UP);
+        data.add(new BarData(totalCases.get(i).getDateUnit(), rate.longValue(),rate.toString()));
       }
     } else if ("3".equals(type)) {//法定审限内结案率 todo 无数据
       CourtCaseExample courtCaseExample = new CourtCaseExample();
@@ -449,7 +464,7 @@ public class CourtServiceImpl implements ICourtService {
       List<BarData> totalCases = queryCase(unit, courtCaseExample);
       for (int i = 0; i < totalCases.size(); i++) {
         long num = 90 + (int) (Math.random() * 10);
-        data.add(new BarData(totalCases.get(i).getDateUnit(), num)); //mock data
+        data.add(new BarData(totalCases.get(i).getDateUnit(), num,String.valueOf(num))); //mock data
       }
     } else if ("4".equals(type)) {//服判诉率 todo 无数据
       CourtCaseExample courtCaseExample = new CourtCaseExample();
@@ -458,16 +473,66 @@ public class CourtServiceImpl implements ICourtService {
       List<BarData> totalCases = queryCase(unit, courtCaseExample);
       for (int i = 0; i < totalCases.size(); i++) {
         long num = 70 + (int) (Math.random() * 20);
-        data.add(new BarData(totalCases.get(i).getDateUnit(), num)); //mock data
+        data.add(new BarData(totalCases.get(i).getDateUnit(), num,String.valueOf(num))); //mock data
       }
     }
-    List<Long> accpetNumber = new ArrayList<>();
+    List<String> accpetNumber = new ArrayList<>();
     List<String> months = new ArrayList<>();
     for (int i = 0; i < data.size(); i++) {
+      if(StringUtils.isEmpty(data.get(i).getNumberText())){
+        data.get(i).setNumberText(String.valueOf(data.get(i).getNumber()));
+      }
       months.add(data.get(i).getDateUnit());
-      accpetNumber.add(data.get(i).getNumber());
+      accpetNumber.add(data.get(i).getNumberText());
     }
-    return new CaseCountBo(accpetNumber, null, months, PerformanceTypeEnum.getName(Integer.parseInt(type)));
+    return new CaseCountBo(accpetNumber, null, months, PerformanceTypeEnum.getName(Integer.parseInt(type))
+        , convertToMutipleBar(startDate, endDate, unit, data));
+  }
+
+  /**
+   * 转化普通柱状图未环比柱状图
+   *
+   * @param startDate
+   * @param endDate
+   * @param unit
+   * @param data
+   * @return
+   */
+  private List<MutipleBarBo> convertToMutipleBar(Date startDate, Date endDate, String unit,
+      List<BarData> data) {
+    Calendar calendar = Calendar.getInstance();
+    calendar.setTime(startDate);
+    int startYear = calendar.get(Calendar.YEAR);
+    Calendar end = Calendar.getInstance();
+    calendar.setTime(endDate);
+    int endYear = calendar.get(Calendar.YEAR);
+    if (endYear - startYear <= 1) {
+      return null;
+    }
+    Map<String, List<BarData>> monthToMonth = new LinkedHashMap<>();
+    for (BarData barData : data) {
+      if(StringUtils.isEmpty(barData.getNumberText())){
+        barData.setNumberText(String.valueOf(barData.getNumber()));
+      }
+      String month = "";
+      if ("month".equals(unit) || StringUtils.isEmpty(unit)) {
+        month = barData.getDateUnit().substring(3, 5);
+      } else if ("quarter".equals(unit)) {
+        month = barData.getDateUnit().substring(3, 4);
+      }
+      if (monthToMonth.get(month) == null) {
+        monthToMonth.put(month, new ArrayList());
+      }
+      monthToMonth.get(month).add(barData);
+    }
+    Iterator<String> iterator = monthToMonth.keySet().iterator();
+    List<MutipleBarBo> mutipleBarBos = new ArrayList<>();
+    while (iterator.hasNext()) {
+      String key = iterator.next();
+      mutipleBarBos.add(new MutipleBarBo(key, monthToMonth.get(key)));
+    }
+    Collections.sort(mutipleBarBos);
+    return mutipleBarBos;
   }
 
   /**
@@ -512,19 +577,19 @@ public class CourtServiceImpl implements ICourtService {
         .andTypeIn(ENFORCE_TYPE);
     List<BarData> endCase = courtCaseMapper
         .countEndCase(courtCaseExample);
-    List<Long> accpetNumber = new ArrayList<>();
+    List<String> accpetNumber = new ArrayList<>();
     List<Long> endNumber = new ArrayList<>();
     List<String> months = new ArrayList<>();
     for (int i = 0; i < accpectCase.size(); i++) {
       months.add(accpectCase.get(i).getDateUnit());
-      accpetNumber.add(accpectCase.get(i).getNumber());
+      accpetNumber.add(String.valueOf(accpectCase.get(i).getNumber()));
       if (i > endCase.size() - 1) {
         endNumber.add(0l);
       } else {
         endNumber.add(endCase.get(i).getNumber());
       }
     }
-    return new CaseCountBo(accpetNumber, endNumber, months, "");
+    return new CaseCountBo(accpetNumber, endNumber, months, "", null);
   }
 
   /**
@@ -555,7 +620,7 @@ public class CourtServiceImpl implements ICourtService {
     courtCaseExample = new CourtCaseExample();
     courtCaseExample.createCriteria().andActualEndDateBetween(startDate, endDate)
         .andEndMethodIn(Arrays
-            .asList(new String[] {"驳回申请", "强制执行完毕", "销案", "执行完毕"})).andTypeIn(Arrays.asList(new String[] {"执", "执恢"}));
+            .asList(new String[] {"自动履行完毕", "强制执行完毕", "执行完毕"})).andTypeIn(Arrays.asList(new String[] {"执", "执恢"}));
     long endNumber = courtCaseMapper.countByExample(courtCaseExample);
     result.put("endNumber", endNumber);
 
@@ -614,6 +679,7 @@ public class CourtServiceImpl implements ICourtService {
    * @param endDate
    * @return
    */
+  /*
   @Override
   public CaseCountBo countDepartmentCase(Date startDate, Date endDate) {
     if (startDate == null || endDate == null) {
@@ -640,8 +706,8 @@ public class CourtServiceImpl implements ICourtService {
         endNumber.add(endCase.get(i).getNumber());
       }
     }
-    return new CaseCountBo(accpetNumber, endNumber, months, "");
-  }
+    return new CaseCountBo(accpetNumber, endNumber, months, "", null);
+  }*/
 
   /**
    * 质效数据饼图

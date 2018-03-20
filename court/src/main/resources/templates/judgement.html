@@ -227,7 +227,11 @@
                    contentType: "application/json; charset=utf-8",
                    success: function (json) {
                        var result = eval(json);
-                       if (result) {
+                       var years=0;
+                       if ($('#J_start').val() != '' && $('#J_end').val() != '') {
+                           years=parseInt(timeEnd.val())-parseInt(timeStart.val());
+                       }
+                       if (years<2) {
                            caseChart.setOption({
                                                    legend: {
                                                        textStyle: {
@@ -305,7 +309,106 @@
                                                    textStyle: {
                                                        color: '#49caf6'
                                                    }
-                                               });
+                                               },true);
+                       }else{
+                           var columLabel  = new Array();
+                           var columName   = new Array();
+                           var columnValue = new Array();
+                           var mutipleBar = result.mutipleBar;
+                           console.info(mutipleBar.length);
+                           for(var i=0;i<mutipleBar.length;i++) {
+                               if($('.tab li.active').attr('value')=='month'){
+                                   columName.push(mutipleBar[i].columLabel+'月');
+                               }
+                               if($('.tab li.active').attr('value')=='quarter'){
+                                   columName.push(mutipleBar[i].columLabel+'季度');
+                               }
+                               if($('.tab li.active').attr('value')=='year'){
+                                   columName.push(mutipleBar[i].columLabel+'年');
+                               }
+                               var barData=mutipleBar[i].barData;
+                               for(var j=0;j<barData.length;j++){
+                                   if(i==0){
+                                       columLabel.push(barData[j].dateUnit.substring(0,3));
+                                   }
+                               }
+                           }
+                           for(var i=0;i<columLabel.length;i++) {
+                               var arrData = new Array();
+                               for (var j = 0; j < columName.length; j++) {
+                                   var barData=mutipleBar[j].barData;
+                                   arrData.push(barData[i].numberText);
+                               }
+                               columnValue.push(eval('(' + ("{'name':'"+columLabel[i]+"','type':'bar','data':["+arrData+"]}") + ')'));
+                           }
+                           caseChart.setOption({
+                                                   legend: {
+                                                       textStyle: {
+                                                           color: '#fff'
+                                                       },
+                                                       selectedMode: false,
+                                                       width: '70%',
+                                                       left: '49%'
+                                                   },
+                                                   toolbox: {
+                                                       feature: {
+                                                           magicType: {show: true, type: ['line', 'bar']},
+                                                           saveAsImage: {show: true}
+                                                       },
+                                                       iconStyle: {
+                                                           borderColor: '#2f81c0'
+                                                       }
+                                                   },
+                                                   tooltip: {
+                                                       trigger: 'axis',
+                                                       axisPointer: {
+                                                           type: 'cross',
+                                                           crossStyle: {
+                                                               color: '#999'
+                                                           }
+                                                       }
+                                                   },
+                                                   xAxis: [{
+                                                       type: 'category',
+                                                       data: columName,
+                                                       axisPointer: {
+                                                           type: 'shadow'
+                                                       },
+                                                       axisLine: {
+                                                           lineStyle: {
+                                                               color: '#1e3760',
+                                                               width: 3
+                                                           }
+                                                       },
+                                                       splitLine: {
+                                                           lineStyle: {
+                                                               color: ['#1e3760'],
+                                                               width: 3
+                                                           }
+                                                       }
+                                                   }],
+                                                   yAxis: [
+                                                       {
+                                                           type: 'value',
+                                                           axisLine: {
+                                                               lineStyle: {
+                                                                   color: '#1e3760',
+                                                                   width: 3
+                                                               }
+                                                           },
+                                                           splitLine: {
+                                                               lineStyle: {
+                                                                   color: ['#1e3760'],
+                                                                   width: 3
+                                                               }
+                                                           }
+                                                       }
+                                                   ],
+                                                   series: columnValue,
+                                                   textStyle: {
+                                                       color: '#49caf6'
+                                                   }
+                                               },true);
                        }
                    },
                    error: function (error) {

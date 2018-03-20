@@ -3,6 +3,9 @@ package com.tech.court.util;
 import java.util.Calendar;
 import java.util.Date;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class DateUtil {
 
   /**
