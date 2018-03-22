@@ -353,13 +353,19 @@
                                    }
                                }
                            }
+                           var color=[
+                               '#C33531','#6a9dcd','#2f81c0','#EE9201','#29AAE3',
+                               '#B74AE5','#0AAF9F','#E89589'
+                           ];
                            for(var i=0;i<columLabel.length;i++) {
                                var arrData = new Array();
                                for (var j = 0; j < columName.length; j++) {
                                    var barData=mutipleBar[j].barData;
-                                   arrData.push(barData[i].numberText);
+                                   if (typeof(barData[i])!="undefined") {
+                                       arrData.push(barData[i].numberText);
+                                   }
                                }
-                               columnValue.push(eval('(' + ("{'name':'"+columLabel[i]+"','type':'bar','data':["+arrData+"]}") + ')'));
+                               columnValue.push(eval('(' + ("{'name':'"+columLabel[i]+"','type':'bar','itemStyle':{color:'"+color[i]+"'},'data':["+arrData+"]}") + ')'));
                            }
 
                            caseChart.setOption({

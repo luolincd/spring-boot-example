@@ -572,8 +572,16 @@
     group by dateUnit
   </select>
 
+  <select id="sumJudgeDays" parameterType="com.tech.court.entity.CourtCaseExample" resultType="java.lang.Long">
+    select sum(judge_days)
+    from court_case
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+
   <select id="countJudgeDays" parameterType="com.tech.court.entity.CourtCaseExample" resultType="com.tech.court.domain.BarData">
-    select date_format(actual_end_date,'%y年%m月') as dateUnit,cast(floor(sum(judge_days)/count(1)) as signed) number
+    select date_format(actual_end_date,'%y年%m月') as dateUnit,cast(sum(judge_days)/count(1) as CHAR(5)) numberText
     from court_case
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
@@ -582,7 +590,7 @@
   </select>
 
   <select id="countQuarterJudgeDays" parameterType="com.tech.court.entity.CourtCaseExample" resultType="com.tech.court.domain.BarData">
-    select  CONCAT(date_format(actual_end_date,'%y年'),quarter(actual_end_date),'季度') as dateUnit,cast(floor(sum(judge_days)/count(1)) as signed) number
+    select  CONCAT(date_format(actual_end_date,'%y年'),quarter(actual_end_date),'季度') as dateUnit,cast(sum(judge_days)/count(1) as CHAR(5)) numberText
     from court_case
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
@@ -591,7 +599,7 @@
   </select>
 
   <select id="countYearJudgeDays" parameterType="com.tech.court.entity.CourtCaseExample" resultType="com.tech.court.domain.BarData">
-    select date_format(actual_end_date,'%y年') as dateUnit,cast(floor(sum(judge_days)/count(1)) as signed) number
+    select date_format(actual_end_date,'%y年') as dateUnit,cast(sum(judge_days)/count(1) as CHAR(5)) numberText
     from court_case
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
@@ -657,13 +665,13 @@
   </select>
 
   <select id="countJudgeDaysByUndertakeUser" parameterType="com.tech.court.entity.CourtCaseExample" resultType="com.tech.court.domain.BarData">
-    select undertake_user as dateUnit,cast(floor(sum(judge_days)/count(1)) as signed) number
+    select undertake_user as dateUnit,sum(judge_days)/count(1) as decimalNumber
     from court_case
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
     group by dateUnit
-    order by number asc
+    order by decimalNumber asc
   </select>
 
   <select id="countNoneEndCases" resultType="java.lang.Long">

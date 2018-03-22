@@ -28,6 +28,8 @@ public interface CourtCaseMapper {
 
     List<BarData> countYearEndCase(CourtCaseExample example);
 
+    Long sumJudgeDays(CourtCaseExample example);
+
     List<BarData> countJudgeDays(CourtCaseExample example);
 
     List<BarData> countQuarterJudgeDays(CourtCaseExample example);

@@ -232,7 +232,7 @@ public class UserServiceImpl {
     List<String> months = new ArrayList<>();
     for (int i = 0; i < data.size(); i++) {
       months.add(data.get(i).getDateUnit());
-      accpetNumber.add(String.valueOf(data.get(i).getNumber()));
+      accpetNumber.add(data.get(i).getDecimalNumber().setScale(2, RoundingMode.HALF_UP).toString());
     }
     return new RateBarBo(accpetNumber, months, PerformanceTypeEnum.getName(Integer.parseInt(type)));
   }

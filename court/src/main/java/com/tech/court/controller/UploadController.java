@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.tech.court.service.impl.CaseReportService;
 import com.tech.court.service.impl.UploadService;
 import com.tech.court.util.FileUtil;
 
@@ -22,6 +23,9 @@ public class UploadController {
 
   @Autowired
   private UploadService uploadService;
+
+  @Autowired
+  private CaseReportService caseReportService;
 
   //处理文件上传
   @RequestMapping(value = "/upload", method = RequestMethod.POST)
@@ -40,5 +44,11 @@ public class UploadController {
     }
     uploadService.importData(new File(filePath + fileName));
     return "upload success";
+  }
+
+  @RequestMapping(value = "/create-report", method = RequestMethod.POST)
+  public String createReport(HttpServletRequest request) throws Exception {
+    caseReportService.createReport();
+    return "success";
   }
 }

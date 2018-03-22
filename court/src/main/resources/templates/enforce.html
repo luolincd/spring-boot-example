@@ -106,21 +106,19 @@
                                   showArrows: true
                               });
     var timeEnd = $('#J_end').datetimepicker({
-                                                 format: 'yyyy-mm-dd',
+                                                 format: 'yyyy',
                                                  language: 'zh-CN',
                                                  weekStart: 1,
-                                                 startView: 2,
-                                                 minView: 2,
+                                                 startView: 4,
+                                                 minView: 4,
                                                  forceParse: false
                                              });
     var timeStart = $('#J_start').datetimepicker({
-                                                     format: 'yyyy-mm-dd',
-                                                     language: 'zh-CN',
-                                                     format: 'yyyy-mm-dd',
+                                                     format: 'yyyy',
                                                      language: 'zh-CN',
                                                      weekStart: 1,
-                                                     startView: 2,
-                                                     minView: 2,
+                                                     startView: 4,
+                                                     minView: 4,
                                                      forceParse: false
                                                  });
     timeStart.on('changeDate', function() {

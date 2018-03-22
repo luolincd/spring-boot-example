@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tech.court.dao.primary.CaseReportMapper">
+  <resultMap id="BaseResultMap" type="com.tech.court.entity.CaseReport">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="year" jdbcType="INTEGER" property="year" />
+    <result column="quarter" jdbcType="INTEGER" property="quarter" />
+    <result column="month" jdbcType="INTEGER" property="month" />
+    <result column="register_number" jdbcType="INTEGER" property="registerNumber" />
+    <result column="end_number" jdbcType="INTEGER" property="endNumber" />
+    <result column="none_end_number" jdbcType="INTEGER" property="noneEndNumber" />
+    <result column="end_rate" jdbcType="DECIMAL" property="endRate" />
+    <result column="judge_days" jdbcType="DECIMAL" property="judgeDays" />
+    <result column="enforce_end_Rate" jdbcType="DECIMAL" property="enforceEndRate" />
+    <result column="limit_end_rate" jdbcType="DECIMAL" property="limitEndRate" />
+    <result column="agree_rate" jdbcType="DECIMAL" property="agreeRate" />
+    <result column="enforce_register_number" jdbcType="INTEGER" property="enforceRegisterNumber" />
+    <result column="enforce_end_number" jdbcType="INTEGER" property="enforceEndNumber" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, year, quarter, month, register_number, end_number, none_end_number, end_rate, 
+    judge_days, enforce_end_Rate, limit_end_rate, agree_rate, enforce_register_number, 
+    enforce_end_number
+  </sql>
+  <select id="selectByExample" parameterType="com.tech.court.entity.CaseReportExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from case_report
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+    <if test="limit != null">
+      <if test="offset != null">
+        limit ${offset}, ${limit}
+      </if>
+      <if test="offset == null">
+        limit ${limit}
+      </if>
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from case_report
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from case_report
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.tech.court.entity.CaseReportExample">
+    delete from case_report
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.tech.court.entity.CaseReport">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into case_report (year, quarter, month, 
+      register_number, end_number, none_end_number, 
+      end_rate, judge_days, enforce_end_Rate, 
+      limit_end_rate, agree_rate, enforce_register_number, 
+      enforce_end_number)
+    values (#{year,jdbcType=INTEGER}, #{quarter,jdbcType=INTEGER}, #{month,jdbcType=INTEGER}, 
+      #{registerNumber,jdbcType=INTEGER}, #{endNumber,jdbcType=INTEGER}, #{noneEndNumber,jdbcType=INTEGER}, 
+      #{endRate,jdbcType=DECIMAL}, #{judgeDays,jdbcType=DECIMAL}, #{enforceEndRate,jdbcType=DECIMAL}, 
+      #{limitEndRate,jdbcType=DECIMAL}, #{agreeRate,jdbcType=DECIMAL}, #{enforceRegisterNumber,jdbcType=INTEGER}, 
+      #{enforceEndNumber,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.tech.court.entity.CaseReport">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into case_report
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="year != null">
+        year,
+      </if>
+      <if test="quarter != null">
+        quarter,
+      </if>
+      <if test="month != null">
+        month,
+      </if>
+      <if test="registerNumber != null">
+        register_number,
+      </if>
+      <if test="endNumber != null">
+        end_number,
+      </if>
+      <if test="noneEndNumber != null">
+        none_end_number,
+      </if>
+      <if test="endRate != null">
+        end_rate,
+      </if>
+      <if test="judgeDays != null">
+        judge_days,
+      </if>
+      <if test="enforceEndRate != null">
+        enforce_end_Rate,
+      </if>
+      <if test="limitEndRate != null">
+        limit_end_rate,
+      </if>
+      <if test="agreeRate != null">
+        agree_rate,
+      </if>
+      <if test="enforceRegisterNumber != null">
+        enforce_register_number,
+      </if>
+      <if test="enforceEndNumber != null">
+        enforce_end_number,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="year != null">
+        #{year,jdbcType=INTEGER},
+      </if>
+      <if test="quarter != null">
+        #{quarter,jdbcType=INTEGER},
+      </if>
+      <if test="month != null">
+        #{month,jdbcType=INTEGER},
+      </if>
+      <if test="registerNumber != null">
+        #{registerNumber,jdbcType=INTEGER},
+      </if>
+      <if test="endNumber != null">
+        #{endNumber,jdbcType=INTEGER},
+      </if>
+      <if test="noneEndNumber != null">
+        #{noneEndNumber,jdbcType=INTEGER},
+      </if>
+      <if test="endRate != null">
+        #{endRate,jdbcType=DECIMAL},
+      </if>
+      <if test="judgeDays != null">
+        #{judgeDays,jdbcType=DECIMAL},
+      </if>
+      <if test="enforceEndRate != null">
+        #{enforceEndRate,jdbcType=DECIMAL},
+      </if>
+      <if test="limitEndRate != null">
+        #{limitEndRate,jdbcType=DECIMAL},
+      </if>
+      <if test="agreeRate != null">
+        #{agreeRate,jdbcType=DECIMAL},
+      </if>
+      <if test="enforceRegisterNumber != null">
+        #{enforceRegisterNumber,jdbcType=INTEGER},
+      </if>
+      <if test="enforceEndNumber != null">
+        #{enforceEndNumber,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.tech.court.entity.CaseReportExample" resultType="java.lang.Long">
+    select count(*) from case_report
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update case_report
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.year != null">
+        year = #{record.year,jdbcType=INTEGER},
+      </if>
+      <if test="record.quarter != null">
+        quarter = #{record.quarter,jdbcType=INTEGER},
+      </if>
+      <if test="record.month != null">
+        month = #{record.month,jdbcType=INTEGER},
+      </if>
+      <if test="record.registerNumber != null">
+        register_number = #{record.registerNumber,jdbcType=INTEGER},
+      </if>
+      <if test="record.endNumber != null">
+        end_number = #{record.endNumber,jdbcType=INTEGER},
+      </if>
+      <if test="record.noneEndNumber != null">
+        none_end_number = #{record.noneEndNumber,jdbcType=INTEGER},
+      </if>
+      <if test="record.endRate != null">
+        end_rate = #{record.endRate,jdbcType=DECIMAL},
+      </if>
+      <if test="record.judgeDays != null">
+        judge_days = #{record.judgeDays,jdbcType=DECIMAL},
+      </if>
+      <if test="record.enforceEndRate != null">
+        enforce_end_Rate = #{record.enforceEndRate,jdbcType=DECIMAL},
+      </if>
+      <if test="record.limitEndRate != null">
+        limit_end_rate = #{record.limitEndRate,jdbcType=DECIMAL},
+      </if>
+      <if test="record.agreeRate != null">
+        agree_rate = #{record.agreeRate,jdbcType=DECIMAL},
+      </if>
+      <if test="record.enforceRegisterNumber != null">
+        enforce_register_number = #{record.enforceRegisterNumber,jdbcType=INTEGER},
+      </if>
+      <if test="record.enforceEndNumber != null">
+        enforce_end_number = #{record.enforceEndNumber,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update case_report
+    set id = #{record.id,jdbcType=INTEGER},
+      year = #{record.year,jdbcType=INTEGER},
+      quarter = #{record.quarter,jdbcType=INTEGER},
+      month = #{record.month,jdbcType=INTEGER},
+      register_number = #{record.registerNumber,jdbcType=INTEGER},
+      end_number = #{record.endNumber,jdbcType=INTEGER},
+      none_end_number = #{record.noneEndNumber,jdbcType=INTEGER},
+      end_rate = #{record.endRate,jdbcType=DECIMAL},
+      judge_days = #{record.judgeDays,jdbcType=DECIMAL},
+      enforce_end_Rate = #{record.enforceEndRate,jdbcType=DECIMAL},
+      limit_end_rate = #{record.limitEndRate,jdbcType=DECIMAL},
+      agree_rate = #{record.agreeRate,jdbcType=DECIMAL},
+      enforce_register_number = #{record.enforceRegisterNumber,jdbcType=INTEGER},
+      enforce_end_number = #{record.enforceEndNumber,jdbcType=INTEGER}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tech.court.entity.CaseReport">
+    update case_report
+    <set>
+      <if test="year != null">
+        year = #{year,jdbcType=INTEGER},
+      </if>
+      <if test="quarter != null">
+        quarter = #{quarter,jdbcType=INTEGER},
+      </if>
+      <if test="month != null">
+        month = #{month,jdbcType=INTEGER},
+      </if>
+      <if test="registerNumber != null">
+        register_number = #{registerNumber,jdbcType=INTEGER},
+      </if>
+      <if test="endNumber != null">
+        end_number = #{endNumber,jdbcType=INTEGER},
+      </if>
+      <if test="noneEndNumber != null">
+        none_end_number = #{noneEndNumber,jdbcType=INTEGER},
+      </if>
+      <if test="endRate != null">
+        end_rate = #{endRate,jdbcType=DECIMAL},
+      </if>
+      <if test="judgeDays != null">
+        judge_days = #{judgeDays,jdbcType=DECIMAL},
+      </if>
+      <if test="enforceEndRate != null">
+        enforce_end_Rate = #{enforceEndRate,jdbcType=DECIMAL},
+      </if>
+      <if test="limitEndRate != null">
+        limit_end_rate = #{limitEndRate,jdbcType=DECIMAL},
+      </if>
+      <if test="agreeRate != null">
+        agree_rate = #{agreeRate,jdbcType=DECIMAL},
+      </if>
+      <if test="enforceRegisterNumber != null">
+        enforce_register_number = #{enforceRegisterNumber,jdbcType=INTEGER},
+      </if>
+      <if test="enforceEndNumber != null">
+        enforce_end_number = #{enforceEndNumber,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.tech.court.entity.CaseReport">
+    update case_report
+    set year = #{year,jdbcType=INTEGER},
+      quarter = #{quarter,jdbcType=INTEGER},
+      month = #{month,jdbcType=INTEGER},
+      register_number = #{registerNumber,jdbcType=INTEGER},
+      end_number = #{endNumber,jdbcType=INTEGER},
+      none_end_number = #{noneEndNumber,jdbcType=INTEGER},
+      end_rate = #{endRate,jdbcType=DECIMAL},
+      judge_days = #{judgeDays,jdbcType=DECIMAL},
+      enforce_end_Rate = #{enforceEndRate,jdbcType=DECIMAL},
+      limit_end_rate = #{limitEndRate,jdbcType=DECIMAL},
+      agree_rate = #{agreeRate,jdbcType=DECIMAL},
+      enforce_register_number = #{enforceRegisterNumber,jdbcType=INTEGER},
+      enforce_end_number = #{enforceEndNumber,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

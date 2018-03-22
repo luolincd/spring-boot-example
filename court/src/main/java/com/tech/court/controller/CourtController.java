@@ -96,8 +96,8 @@ public class CourtController {
     Date startDate = null;
     Date endDate = null;
     if (!StringUtils.isEmpty(statisticsQuery.getStartDate()) && !StringUtils.isEmpty(statisticsQuery.getEndDate())) {
-      startDate = sdfDetail.parse(statisticsQuery.getStartDate());
-      endDate = sdfDetail.parse(statisticsQuery.getEndDate());
+      startDate = sdf.parse(statisticsQuery.getStartDate());
+      endDate = sdf.parse(statisticsQuery.getEndDate());
     }
     return courtService.getEnforceMethod(startDate, endDate);
   }
@@ -108,8 +108,8 @@ public class CourtController {
     Date startDate = null;
     Date endDate = null;
     if (!StringUtils.isEmpty(statisticsQuery.getStartDate()) && !StringUtils.isEmpty(statisticsQuery.getEndDate())) {
-      startDate = sdfDetail.parse(statisticsQuery.getStartDate());
-      endDate = sdfDetail.parse(statisticsQuery.getEndDate());
+      startDate = sdf.parse(statisticsQuery.getStartDate());
+      endDate = sdf.parse(statisticsQuery.getEndDate());
     }
     return courtService.countEnforceCase(startDate, endDate);
   }
@@ -120,8 +120,8 @@ public class CourtController {
     Date startDate = null;
     Date endDate = null;
     if (!StringUtils.isEmpty(statisticsQuery.getStartDate()) && !StringUtils.isEmpty(statisticsQuery.getEndDate())) {
-      startDate = sdfDetail.parse(statisticsQuery.getStartDate());
-      endDate = sdfDetail.parse(statisticsQuery.getEndDate());
+      startDate = sdf.parse(statisticsQuery.getStartDate());
+      endDate = sdf.parse(statisticsQuery.getEndDate());
     }
     return courtService.getEnforceSummary(startDate, endDate);
   }
