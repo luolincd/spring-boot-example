@@ -17,6 +17,8 @@ public interface ICourtService {
 
   Map getJudgementSummary(Date startDate, Date endDate);
 
+  Map getTotalJudgementSummary(Date startDate, Date endDate);
+
   Map getCourtLiveSummary();
 
   CaseCountBo countCase(Date startDate, Date endDate, String unit, String type) throws Exception;

@@ -115,19 +115,19 @@
         </div>
         <div class="bf">
             <div class="nb1">
-                结案率 <span class="count" id="endRate" th:text="${summary.endRate}+'%'">80%</span>
+                受理案件数 <span class="count" id="processedNumber"></span>
             </div>
             <div class="nb2">
-                判决率 <span class="count" id="judgeRate" th:text="${summary.judgeRate}+'%'">80%</span>
+                 <span class="count"></span>
             </div>
             <div class="nb3">
-                调解率 <span class="count" id="conciliationRate" th:text="${summary.conciliationRate}+'%'">80%</span>
+                结案数 <span class="count" id="totalEndNumber"></span>
             </div>
             <div class="nb4">
-                撤诉率 <span class="count" id="dropRate" th:text="${summary.dropRate}+'%'">80%</span>
+                 <span class="count" ></span>
             </div>
             <div class="nb5">
-                驳回起诉率 <span class="count" id="rejectRate" th:text="${summary.rejectRate}+'%'">80%</span>
+                结案率 <span class="count" id="endRate"></span>
             </div>
         </div>
     </div>
@@ -146,19 +146,21 @@
                               })
 
     var timeEnd = $('#J_end').datetimepicker({
-                                                 format: 'yyyy',
+                                                 format: 'yyyy-mm-dd',
                                                  language: 'zh-CN',
                                                  weekStart: 1,
-                                                 startView: 4,
-                                                 minView: 4,
+                                                 startView: 2,
+                                                 minView: 2,
                                                  forceParse: false
                                              });
     var timeStart = $('#J_start').datetimepicker({
-                                                     format: 'yyyy',
+                                                     format: 'yyyy-mm-dd',
+                                                     language: 'zh-CN',
+                                                     format: 'yyyy-mm-dd',
                                                      language: 'zh-CN',
                                                      weekStart: 1,
-                                                     startView: 4,
-                                                     minView: 4,
+                                                     startView: 2,
+                                                     minView: 2,
                                                      forceParse: false
                                                  });
     timeStart.on('changeDate', function () {
@@ -188,7 +190,7 @@
     function loadSummary() {
         $.ajax({
                    type: "GET",
-                   url: "courts/judgement-summary",
+                   url: "courts/total-judgement-summary",
                    data: {
                        "startDate": $('#J_start').val(),
                        "endDate": $('#J_end').val()
@@ -198,10 +200,8 @@
                    success: function (json) {
                        var result = eval(json);
                        $('#endRate').text(result.endRate + '%');
-                       $('#judgeRate').text(result.judgeRate + '%');
-                       $('#conciliationRate').text(result.conciliationRate + '%');
-                       $('#dropRate').text(result.dropRate + '%');
-                       $('#rejectRate').text(result.rejectRate + '%');
+                       $('#totalEndNumber').text(result.endNumber);
+                       $('#processedNumber').text(result.processedNumber);
                        $('#startNumber').text(result.startNumber);
                        $('#oldNumber').text(result.oldNumber);
                        $('#endNumber').text(result.endNumber);

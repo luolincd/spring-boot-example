@@ -109,7 +109,21 @@
       </div>
     </div>
     <div class="bf">
-
+      <div class="nb1">
+        <span class="count" id="chiefjudge0" ></span>
+      </div>
+      <div class="nb2">
+        <span class="count" id="chiefjudge1" ></span>
+      </div>
+      <div class="nb3">
+        <span class="count" id="chiefjudge2" ></span>
+      </div>
+      <div class="nb4">
+        <span class="count" id="chiefjudge3"></span>
+      </div>
+      <div class="nb5">
+        <span class="count" id="chiefjudge4" ></span>
+      </div>
     </div>
   </div>
 </div>
@@ -182,6 +196,18 @@
                    success: function (json) {
                        var result = eval(json);
                        if (result) {
+                           if($('#J_select_1').val()=='2'){
+                               for(var i=0;i<3;i++){
+                                   $("#chiefjudge"+i).text(result.months[i]+' '+result.accpetNumber[i]);
+                               }
+                               $("#chiefjudge3").text("");
+                               $("#chiefjudge4").text("");
+                           }else{
+                               for(var i=0;i<5;i++){
+                                   $("#chiefjudge"+i).text(result.months[i]+' '+result.accpetNumber[i]);
+                               }
+                           }
+
                            caseChart.setOption({
                                                    legend: {
                                                        textStyle: {

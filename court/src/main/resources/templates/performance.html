@@ -37,7 +37,7 @@
         <!--<a class="child" href="department.html">部门数据</a>-->
       </div>
       <div class="nums">
-        新收案件：<span id="totalNumber" th:text="${summary.totalNumber}">20</span>
+        受理案件：<span id="totalNumber" th:text="${summary.processedNumber}">20</span>
         已结案件：<span id="endNumber" th:text="${summary.endNumber}">20</span>
         未结案件：<span id="noneEndNumber" th:text="${summary.noneEndNumber}">20</span>
         累计结案率：<span id="endRate" th:text="${summary.endRate}+'%'">20</span>
@@ -115,19 +115,19 @@
     </div>
     <div class="bf">
       <div class="nb1">
-        涉枪案件 <span class="count" id="gunNumber" th:text="${performance.gunNumber}">80%</span>
+        平均审理天数 <span class="count" id="judgeDays"></span>
       </div>
       <div class="nb2">
-        涉毒案件 <span class="count" id="drugNumber" th:text="${performance.drugNumber}">80%</span>
+        实际执结率 <span class="count" id="enforceEndRate"></span>
       </div>
       <div class="nb3">
-        简易程序 <span class="count" id="simpleProgram" th:text="${performance.simpleProgram}">80%</span>
+         <span class="count" id="simpleProgram"></span>
       </div>
       <div class="nb4">
-        普通程序 <span class="count" id="commonProgram" th:text="${performance.commonProgram}">80%</span>
+        服判息诉率 <span class="count" id="agreeRate"></span>
       </div>
       <div class="nb5">
-        小额诉讼程序 <span class="count" id="littleProgram" th:text="${performance.littleProgram}">80%</span>
+        审执限结案率 <span class="count" id="limitEndRate"></span>
       </div>
     </div>
   </div>
@@ -199,7 +199,7 @@
                    success: function (json) {
                        var result = eval(json);
                        $('#endRate').text(result.endRate + '%');
-                       $('#totalNumber').text(result.totalNumber);
+                       $('#totalNumber').text(result.processedNumber);
                        $('#endNumber').text(result.endNumber);
                        $('#noneEndNumber').text(result.noneEndNumber);
                    }
@@ -220,11 +220,10 @@
                    contentType: "application/json; charset=utf-8",
                    success: function (json) {
                        var result = eval(json);
-                       $('#gunNumber').text(result.gunNumber);
-                       $('#drugNumber').text(result.drugNumber);
-                       $('#simpleProgram').text(result.simpleProgram);
-                       $('#commonProgram').text(result.commonProgram);
-                       $('#littleProgram').text(result.littleProgram);
+                       $('#judgeDays').text(result.judgeDays);
+                       $('#enforceEndRate').text(result.enforceEndRate+'%');
+                       $('#agreeRate').text(result.agreeRate+'%');
+                       $('#limitEndRate').text(result.limitEndRate+'%');
                    }
                })
     }

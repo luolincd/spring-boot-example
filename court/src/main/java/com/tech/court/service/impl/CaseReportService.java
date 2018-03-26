@@ -191,7 +191,7 @@ public class CaseReportService {
     return list;
   }
 
-  private void getCurrentYearReport(final String unit, final int endYear, final List<CaseReport> caseReports) {
+  public void getCurrentYearReport(final String unit, final int endYear, final List<CaseReport> caseReports) {
     final CaseReportExample caseReportExample;
     int currentYear = DateUtil.getYear(Calendar.getInstance().getTime());
     int currentMonth = DateUtil.getMonth(Calendar.getInstance().getTime());
@@ -204,6 +204,17 @@ public class CaseReportService {
       caseReports.add(currentCaseReport);
     }
   }
+
+  public CaseReport getYearReport(final int year) {
+    final CaseReportExample caseReportExample;
+    caseReportExample = new CaseReportExample();
+    caseReportExample.createCriteria().andYearEqualTo(year);
+    caseReportExample.setOrderByClause(" month desc");
+    CaseReport caseReport = caseReportMapper.selectByExample(caseReportExample).get(0);
+    log.info("case report:{}", caseReport.toString());
+    return caseReport;
+  }
+
 
   /**
    * 查询质效数据报表

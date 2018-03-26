@@ -41,6 +41,18 @@ public class CourtController {
     return courtService.getJudgementSummary(startDate, endDate);
   }
 
+  @GetMapping(value = "/total-judgement-summary")
+  public Map getTotalJudgementSummary(StatisticsQuery statisticsQuery) throws ParseException {
+    Date startDate = null;
+    Date endDate = null;
+    log.info("startDate:{},endDate:{}", statisticsQuery.getStartDate(), statisticsQuery.getEndDate());
+    if (!StringUtils.isEmpty(statisticsQuery.getStartDate()) && !StringUtils.isEmpty(statisticsQuery.getEndDate())) {
+      startDate = sdfDetail.parse(statisticsQuery.getStartDate());
+      endDate = sdfDetail.parse(statisticsQuery.getEndDate());
+    }
+    return courtService.getTotalJudgementSummary(startDate, endDate);
+  }
+
   @GetMapping(value = "/judgement-statistics")
   public List<JudgementStatistics> getJudgementStatistics(StatisticsQuery statisticsQuery) throws ParseException {
     log.info("startDate:{},endDate:{}", statisticsQuery.getStartDate(), statisticsQuery.getEndDate());

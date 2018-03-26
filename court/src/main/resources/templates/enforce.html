@@ -82,13 +82,13 @@
         </div>
         <div class="bf">
             <div class="nb1">
-                <span class="name">执结率</span> <span class="count" id="endRate" th:text="${summary.endRate}">28%</span>
+                <span class="name">执行结案率</span> <span class="count" id="enforeEndRate" th:text="${summary.enforeEndRate}">28%</span>
             </div>
             <div class="nb2">
-                <span class="name">执行标的到位率</span> <span class="count" id="actualAmountRate" th:text="${summary.actualAmountRate}+'%'">33%</span>
+                <span class="name">实际执结率</span> <span class="count" id="endRate" th:text="${summary.endRate}+'%'">33%</span>
             </div>
             <div class="nb3">
-                <span class="name">执行兑现率</span> <span class="count" id="endAmountRate" th:text="${summary.endAmountRate}+'%'">15%</span>
+                <span class="name">实际执行到位率</span> <span class="count" id="actualAmountRate" th:text="${summary.actualAmountRate}+'%'">15%</span>
             </div>
         </div>
     </div>
@@ -330,7 +330,7 @@
                        $('#actualAmount').text(result.actualAmount);
                        $('#endRate').text(result.endRate);
                        $('#actualAmountRate').text(result.actualAmountRate+'%');
-                       $('#endAmountRate').text(result.endAmountRate+'%');
+                       $('#enforeEndRate').text(result.enforeEndRate);
                    }
                })
     }
